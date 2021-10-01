@@ -13,8 +13,9 @@ import { Reflector } from '@nestjs/core';
 export class CacheManagerInterceptor implements NestInterceptor {
   constructor(private reflector: Reflector) {}
 
-  manager = cacheManager.caching({ store: 'memory', max: 100, ttl: 10 });
-
+  manager = cacheManager.caching({ store: 'memory', max: 1, ttl: 10 });
+  // max: số lượng tối đa các mục trong bộ nhớ cache
+  // ttl: thời gian sống của cache
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
