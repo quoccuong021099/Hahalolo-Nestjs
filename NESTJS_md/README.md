@@ -830,6 +830,7 @@ export class ValidationPipe implements PipeTransform {
 - Mọi pipes implement phải có phương thức transform() để đúng với việc đã implement interface PipeTransform. Phương thức này có hai tham số:
 
   - value
+  
   - metadata
 
 - Tham số value là đối số phương thức hiện đang được xử lý (trước khi nó được phương thức route handler nhận) và metadata là metadata của đối số phương thức hiện được xử lý. Đối tượng metadata có các thuộc tính sau:

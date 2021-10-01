@@ -150,3 +150,159 @@ export class AppModule {}
 ```
 
 - Trong ví dụ này, chúng tôi đang liên kết một token có giá trị chuỗi (‘CONNECTION’) với một đối tượng connection đã có từ trước mà chúng tôi đã nhập từ một tệp bên ngoài.
+
+### Class providers: useClass
+
+- Cú pháp useClass cho phép bạn xác định động một lớp mà token sẽ phân giải. Ví dụ, giả sử chúng ta có một lớp ConfigService trừu tượng (hoặc mặc định). Tùy thuộc vào môi trường hiện tại, chúng tôi muốn Nest cung cấp cách triển khai dịch vụ cấu hình khác nhau. Đoạn mã sau thực hiện một chiến lược như vậy.
+
+```ts
+const configServiceProvider = {
+  provide: ConfigService,
+  useClass:
+    process.env.NODE_ENV === "development"
+      ? DevelopmentConfigService
+      : ProductionConfigService,
+};
+
+@Module({
+  providers: [configServiceProvider],
+})
+export class AppModule {}
+```
+
+- Sử dụng tên lớp ConfigService làm token của chúng tôi. Đối với bất kỳ lớp nào phụ thuộc vào ConfigService, Nest sẽ inject một instance của lớp được provided (DevelopmentConfigService hoặc ProductionConfigService) ghi đè bất kỳ triển khai mặc định nào có thể đã được khai báo ở nơi khác (ví dụ: một ConfigService được khai báo với @Injectable() decorator).
+
+### Factory providers: useFactory
+
+```ts
+const connectionFactory = {
+  provide: "CONNECTION",
+  useFactory: (optionsProvider: OptionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
+@Module({
+  providers: [connectionFactory],
+})
+export class AppModule {}
+```
+
+- Cú pháp useFactory cho phép tạo động các providers. Provider thực tế sẽ được cung cấp bởi giá trị trả về từ một function của factory. Factory function có thể đơn giản hoặc phức tạp nếu cần. Một factory đơn giản có thể không phụ thuộc vào bất kỳ provider nào khác. Một factory phức tạp hơn có thể tự inject các provider khác mà nó cần để tính toán kết quả của nó. Đối với trường hợp thứ hai, cú pháp của provider gốc có một cặp cơ chế liên quan:
+
+  - Factory function có thể chấp nhận các đối số (tùy chọn).
+
+  - Thuộc tính inject (tùy chọn) chấp nhận một mảng các providers mà Nest sẽ phân giải và truyền làm đối số cho factory function trong quá trình khởi tạo. Hai danh sách phải tương quan với nhau: Nest sẽ chuyển các instances từ danh sách inject làm đối số cho factory function theo cùng một thứ tự.
+
+### Alias providers: useExisting
+
+- Cú pháp useExisting cho phép bạn tạo aliases cho các providers hiện có. Điều này tạo ra hai cách để truy cập cùng một provider. Trong ví dụ bên dưới, token (dựa trên chuỗi) ‘AliasedLoggerService‘ là bí danh cho token (dựa trên lớp) LoggerService. Giả sử chúng ta có hai dependencies khác nhau, một cho ‘AliasedLoggerService‘ và một cho LoggerService. Nếu cả hai phần dependencies đều được chỉ định với phạm vi SINGLETON, cả hai đều sẽ giải quyết cho cùng một instance.
+
+```ts
+@Injectable()
+class LoggerService {
+  /* implementation details */
+}
+
+const loggerAliasProvider = {
+  provide: "AliasedLoggerService",
+  useExisting: LoggerService,
+};
+
+@Module({
+  providers: [LoggerService, loggerAliasProvider],
+})
+export class AppModule {}
+```
+
+### Non-service based providers
+
+- Trong khi các providers thường cung cấp services, họ không giới hạn việc sử dụng đó. Một provider có thể cung cấp bất kỳ giá trị nào. Ví dụ: một provider có thể cung cấp một loạt các đối tượng cấu hình dựa trên môi trường hiện tại, như được hiển thị bên dưới:
+
+```ts
+const configFactory = {
+  provide: "CONFIG",
+  useFactory: () => {
+    return process.env.NODE_ENV === "development" ? devConfig : prodConfig;
+  },
+};
+
+@Module({
+  providers: [configFactory],
+})
+export class AppModule {}
+```
+
+### Export custom provider
+
+- Giống như bất kỳ provider nào, provider tùy chỉnh được xác định phạm vi đến mô-đun khai báo của nó. Để hiển thị nó với các mô-đun khác, nó phải được exported. Để xuất một provider tùy chỉnh, chúng tôi có thể sử dụng token của nó hoặc đối tượng provider đầy đủ.
+
+- Ví dụ exported bằng token
+
+```ts
+const connectionFactory = {
+  provide: "CONNECTION",
+  useFactory: (optionsProvider: OptionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
+@Module({
+  providers: [connectionFactory],
+  exports: ["CONNECTION"],
+})
+export class AppModule {}
+```
+
+- Ngoài ra, export với đối tượng provider đầy đủ:
+
+```ts
+const connectionFactory = {
+  provide: "CONNECTION",
+  useFactory: (optionsProvider: OptionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
+@Module({
+  providers: [connectionFactory],
+  exports: [connectionFactory],
+})
+export class AppModule {}
+```
+
+==========================================
+
+# 2. Asynchronous providers
+
+- Đôi khi, việc khởi động ứng dụng sẽ bị trì hoãn cho đến khi hoàn thành một hoặc nhiều tác vụ không đồng bộ. Ví dụ, bạn có thể không muốn bắt đầu chấp nhận các requests cho đến khi kết nối với cơ sở dữ liệu đã được thiết lập. Bạn có thể đạt được điều này bằng cách sử dụng các providers không đồng bộ.
+
+- Cú pháp cho điều này là sử dụng async / await với cú pháp useFactory. Factory trả về một Promise và factory function có thể await các tác vụ không đồng bộ. Nest sẽ chờ giải quyết lời hứa trước khi khởi tạo bất kỳ lớp nào phụ thuộc vào (injects) một provider như vậy.
+
+```ts
+{
+  provide: 'ASYNC_CONNECTION',
+  useFactory: async () => {
+    const connection = await createConnection(options);
+    return connection;
+  },
+}
+```
+
+==========================================
+
+# 3. Dynamic modules
+
+# Note
+
+- Sử dụng useValue (custom provider)
+
+- Non-class-based provider tokens
+
+- useFactory
