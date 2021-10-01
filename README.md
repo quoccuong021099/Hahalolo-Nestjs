@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 5. Middleware
 
   Middleware là một hàm được gọi trước khi tới handler route. Các hàm middleware có quyền truy cập vào các object request và response cũng như hàm middleware next() trong chu trình request-response của ứng dụng. Hàm middlware next thường được ký hiệu bằng một biến có tên là next.
@@ -574,3 +575,6 @@
   return this.catsService.findAll({ activeOnly, page });
   }
   ```
+=======
+
+>>>>>>> 5beb0319e14e73c53993adacb5304a80116771d3
