@@ -4,15 +4,15 @@ Guard là một lớp bảo vệ được chú thích bằng decorator @Injectab
 
 ![img](https://docs.nestjs.com/assets/Guards_1.png)
 
-Các Guards có một single responsibility. Họ xác định xem một request nhất định sẽ được xử lý bởi route handler hay không, tùy thuộc vào các điều kiện nhất định (như quyền/permissons, vai trò/roles, ACLs, v.v.) hiện có tại thời điểm chạy. Điều này thường được gọi là ủy quyền/authorization. Ủy quyền/Authorization thường được xử lý bởi middleware trong các ứng dụng Express truyền thống. Middleware là một lựa chọn tốt để xác thực/authentication, vì những thứ như token validation thông báo và đính kèm thuộc tính vào request object không được kết nối chặt chẽ với ngữ cảnh route cụ thể.
+Các `Guards` có một single responsibility. Nó xác định xem một request nhất định sẽ được xử lý bởi route handler hay không, tùy thuộc vào các điều kiện nhất định (như quyền/permissons, vai trò/roles, ACLs, v.v.) hiện có tại thời điểm chạy. Điều này thường được gọi là ủy quyền/authorization. Ủy quyền/Authorization thường được xử lý bởi middleware trong các ứng dụng Express truyền thống. Middleware là một lựa chọn tốt để xác thực/authentication, vì những thứ như token validation thông báo và đính kèm thuộc tính vào request object không được kết nối chặt chẽ với ngữ cảnh route cụ thể.
 
-Nhưng middleware không biết handler nào sẽ được thực thi sau khi gọi hàm next(). Mặt khác, Guards có quyền truy cập vào instance ExecutionContext và do đó biết chính xác những gì sẽ được thực thi tiếp theo. Chúng được thiết kế, giống như exception filters, pipes và interceptors, để cho phép sử dụng logic xử lý chính xác vào đúng điểm trong chu kỳ request/response và làm như vậy một cách khai báo. Điều này giúp giữ cho code của bạn DRY và dễ khai báo.
+Nhưng `middleware` không biết handler nào sẽ được thực thi sau khi gọi hàm `next()`. Mặt khác, Guards có quyền truy cập vào instance ExecutionContext và do đó biết chính xác những gì sẽ được thực thi tiếp theo. Chúng được thiết kế, giống như exception filters, pipes và interceptors, để cho phép sử dụng logic xử lý chính xác vào đúng điểm trong chu kỳ request/response và làm như vậy một cách khai báo. Điều này giúp giữ cho code của bạn trong gọn và dễ khai báo.
 
-<ins>Chú ý</ins>: Guards được thực thi sau mỗi middleware, nhưng trước bất kỳ interceptor hoặc pipe.
+<ins>Chú ý</ins>: `Guards` được thực thi sau mỗi middleware, nhưng trước bất kỳ interceptor hoặc pipe.
 
 ## Authorization guard:
 
-Authorization/ủy quyền là một trường hợp sử dụng tuyệt vời cho các Guards vì các route cụ thể chỉ khả dụng khi người gọi (thường là người dùng được authenticated/xác thực cụ thể) có đủ quyền/permissions. AuthGuard mà chúng tôi sẽ xây dựng bây giờ giả định một người dùng đã được xác thực/authenticated (và do đó, một token được đính kèm với các request headers). Nó sẽ trích xuất và validate token, đồng thời sử dụng thông tin được trích xuất để xác định xem liệu request có thể tiếp tục hay không.
+Authorization/ủy quyền là một trường hợp sử dụng tuyệt vời cho các Guards vì các route cụ thể chỉ khả dụng khi người gọi (thường là người dùng được authenticated/xác thực cụ thể) có đủ quyền/permissions. AuthGuard mà chúng ta sẽ xây dựng bây giờ giả định một người dùng đã được xác thực/authenticated (và do đó, một token được đính kèm với các request headers). Nó sẽ trích xuất và validate token, đồng thời sử dụng thông tin được trích xuất để xác định xem liệu request có thể tiếp tục hay không.
 
 ```TypeScript
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
@@ -29,16 +29,16 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
-Logic bên trong hàm validateRequest() có thể đơn giản hoặc phức tạp nếu cần. Điểm chính của ví dụ này là chỉ ra cách các guards phù hợp với chu trình request/response.
+Logic bên trong hàm `validateRequest()` có thể đơn giản hoặc phức tạp nếu cần. Điểm chính của ví dụ này là chỉ ra cách các guards phù hợp với chu trình request/response.
 
-Mọi guard phải implement một hàm canActivate(). Hàm này sẽ trả về một boolean, cho biết request hiện tại có được phép hay không. Nó có thể trả về response đồng bộ hoặc không đồng bộ (thông qua Promise hoặc Observable). Nest sử dụng giá trị trả về để kiểm soát hành động tiếp theo:
+Mọi guard phải implement một hàm `canActivate()`. Hàm này sẽ trả về một boolean, cho biết request hiện tại có được phép hay không. Nó có thể trả về response đồng bộ hoặc không đồng bộ (thông qua Promise hoặc Observable). Nest sử dụng giá trị trả về để kiểm soát hành động tiếp theo:
 
 - Nếu trả về true, request sẽ được thực hiện.
 - Nếu trả về false, Nest sẽ từ chối request.
 
 ## Execution context:
 
-Hàm canActivate() nhận một đối số duy nhất là instance ExecutionContext. ExecutionContext kế thừa từ ArgumentsHost. Trong ví dụ trên, chúng tôi chỉ đang sử dụng cùng một phương thức helper được định nghĩa trên ArgumentsHost mà chúng tôi đã sử dụng trước đó, để nhận tham chiếu đến Request object.
+Hàm `canActivate()` nhận một đối số duy nhất là instance ExecutionContext. ExecutionContext kế thừa từ ArgumentsHost. Trong ví dụ trên, chúng tôi chỉ đang sử dụng cùng một phương thức helper được định nghĩa trên ArgumentsHost mà chúng tôi đã sử dụng trước đó, để nhận tham chiếu đến Request object.
 
 Bằng cách mở rộng ArgumentsHost, ExecutionContext cũng bổ sung một số phương thức helper mới cung cấp chi tiết bổ sung về quy trình thực thi hiện tại. Những chi tiết này có thể hữu ích trong việc xây dựng nhiều guards chung hơn có thể hoạt động trên nhiều controllers, phương thức và execution contexts.
 
@@ -70,9 +70,9 @@ Giống như các pipes và exception filters, các guards có thể là phạm 
 export class CatsController {}
 ```
 
-Cấu trúc bên trên gắn guard vào mọi handler do controller này khai báo. Nếu chúng ta muốn guard chỉ áp dụng cho một phương thức, chúng ta áp dụng decorator @UseGuards() ở cấp phương thức.
+Cấu trúc bên trên gắn guard vào mọi handler do controller này khai báo. Nếu chúng ta muốn guard chỉ áp dụng cho một phương thức, chúng ta áp dụng decorator `@UseGuards()` ở cấp phương thức.
 
-Để thiết lập bảo vệ toàn cục, hãy sử dụng phương thức useGlobalGuards() của instance ứng dụng Nest:
+Để thiết lập bảo vệ toàn cục, hãy sử dụng phương thức `useGlobalGuards()` của instance ứng dụng Nest:
 
 ```TypeScript
 const app = await NestFactory.create(AppModule);
@@ -98,9 +98,9 @@ export class AppModule {}
 
 ## Setting roles per handler:
 
-RolesGuard của chúng tôi đang hoạt động, nhưng nó chưa thông minh lắm. Chúng tôi vẫn chưa tận dụng tính năng guard quan trọng nhất – execution context. Nó vẫn chưa biết về các roles, hoặc những roles nào được phép cho mỗi handler. Ví dụ, CatsController có thể có các sơ đồ quyền khác nhau cho các route khác nhau. Một số có thể chỉ có sẵn cho người dùng quản trị và những cái khác có thể mở cho tất cả mọi người. Làm thế nào chúng ta có thể kết hợp các role với các routes một cách linh hoạt và có thể tái sử dụng?
+`RolesGuard` của chúng tôi đang hoạt động, nhưng nó chưa thông minh lắm. Chúng tôi vẫn chưa tận dụng tính năng guard quan trọng nhất – execution context. Nó vẫn chưa biết về các roles, hoặc những roles nào được phép cho mỗi handler. Ví dụ, CatsController có thể có các sơ đồ quyền khác nhau cho các route khác nhau. Một số có thể chỉ có sẵn cho người dùng quản trị và những cái khác có thể mở cho tất cả mọi người. Làm thế nào chúng ta có thể kết hợp các role với các routes một cách linh hoạt và có thể tái sử dụng?
 
-Đây là nơi metadata tùy chỉnh phát huy tác dụng. Nest cung cấp khả năng đính kèm metadata tùy chỉnh để route handlers thông qua decorator @SetMetadata(). Metadata này cung cấp dữ liệu vai trò còn thiếu của chúng tôi, mà một guard thông minh cần đưa ra quyết định.
+Đây là nơi metadata tùy chỉnh phát huy tác dụng. Nest cung cấp khả năng đính kèm metadata tùy chỉnh để route handlers thông qua decorator `@SetMetadata()`. Metadata này cung cấp dữ liệu vai trò còn thiếu của chúng tôi, mà một guard thông minh cần đưa ra quyết định.
 
 ```TypeScript
 @Post()
@@ -110,7 +110,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-Với cách xây dựng ở trên, chúng tôi đã đính kèm metadata roles (roles là một khóa, trong khi [‘admin’] là một giá trị cụ thể) vào phương thức create(). Mặc dù điều này hoạt động, nhưng thực tế không tốt nếu sử dụng @SetMetadata() trực tiếp trong các routes của bạn. Thay vào đó, hãy decorator của riêng bạn, như được hiển thị bên dưới:
+Với cách xây dựng ở trên, chúng tôi đã đính kèm metadata roles (roles là một khóa, trong khi [‘admin’] là một giá trị cụ thể) vào phương thức create(). Mặc dù điều này hoạt động, nhưng thực tế không tốt nếu sử dụng `@SetMetadata()` trực tiếp trong các routes của bạn. Thay vào đó, hãy decorator của riêng bạn, như được hiển thị bên dưới:
 
 ```TypeScript
 import { SetMetadata } from '@nestjs/common';
@@ -118,7 +118,7 @@ import { SetMetadata } from '@nestjs/common';
 export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 ```
 
-Cách tiếp cận này rõ ràng hơn và dễ đọc hơn, và được kiểu mạnh mẽ. Bây giờ chúng ta đã có một decorator @Roles() tùy chỉnh, chúng ta có thể sử dụng nó để decorator cho phương thức create().
+Cách tiếp cận này rõ ràng hơn và dễ đọc hơn, và được kiểu mạnh mẽ. Bây giờ chúng ta đã có một decorator @Roles() tùy chỉnh, chúng ta có thể sử dụng nó để decorator cho phương thức `create()`.
 
 ```TypeScript
 @Post()
