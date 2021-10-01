@@ -4,9 +4,9 @@
 
 - NestJS là một framework để xây dựng các ứng dụng Server-Side bằng Node.js hiệu quả, và để mở rộng.
 - Sử dụng ngôi ngữ bậc cao của javascrip là TypeScript (nhưng vẫn cho phép các nhà phát triển sử dụng JavaScript thuần túy) và kết hợp các tính chất:
-  - OOP (Lập trình hướng đối tượng),
-  - FP (Lập trình chức năng)
-  - FRP (Lập trình phản ứng chức năng).
+  - OOP (Lập trình hướng đối tượng): Là một kỹ thuật lập trình cho phép lập trình viên tạo ra các đối tượng trong code trừu tượng hóa các đối tượng.
+  - FP (Lập trình chức năng): Một tiến trình tạo nên một phần mềm bằng cách kết hợp các pure function, và tránh chia sẻ states, mutable data, side-effect.
+  - FRP (Lập trình phản ứng chức năng): Là một khuôn khổ chương trình kết hợp kỹ thuật lập trình chức năng và phản ứng để xây dựng các ứng dụng, dịch vụ và các thiết bị.
 - Nest sử dụng được Express (mặc định) và tùy chọn để sử dụng Fastify !
 - Nest cung cấp một tầng trừu tượng trên các framework Node.js phổ biến này (Express / Fastify), nhưng cũng hỗ trợ API của họ trực tiếp cho nhà phát triển.
 
@@ -55,21 +55,21 @@
         |                          | - Khi nó trả về một loại Javascript nguyên thủy Nest sẽ gửi chỉ là giá trị mà không cần cố gắng để serialize nó.            |     |
         |                          | - Có thể dễ dàng thay đổi hành vi này bằng cách thêm trình `@HttpCode(...)` trang trí ở cấp trình xử lý                     |
         | Thư viện cụ thể          | Sử dụng đối tượng phản hồi dành riêng cho thư viện                                                                          |
-        |                          | Đối tượng này có thể được đưa vào bằng cách sử dụng trình @Res()trang trí trong chữ ký của trình xử lý phương thức          |
+        |                          | Đối tượng này có thể được đưa vào bằng cách sử dụng trình `@Res()` trang trí trong chữ ký của trình xử lý phương thức          |
         |                          | Ex: `findAll(@Res() response)`                                                                                              |
     - `Request object`:
       - Nest truy cập đối tượng bằng `@Req()`
-      - Nội dung sử dụng @Body()hoặc `@Query()`
-      - `Res()` Trực tiếp hiển thị responsegiao diện đối tượng nền tảng gốc bên dưới.
+      - Nội dung sử dụng `@Body()` hoặc `@Query()`
+      - `Res()` Trực tiếp hiển thị `response` giao diện đối tượng nền tảng gốc bên dưới.
     - `Resources`:
       - Nest cung cấp trang trí cho tất cả các phương thức HTTP tiêu chuẩn:
-        - `@Get(), @Post(), @Put(), @Delete(), @Patch(), @Options()`, và `@Head()`. Ngoài ra, `@All()`xác định một điểm cuối xử lý tất cả chúng.
+        - `@Get(), @Post(), @Put(), @Delete(), @Patch(), @Options()`, và `@Head()`. Ngoài ra, `@All()` xác định một điểm cuối xử lý tất cả chúng.
     - `Status code`:
       ```JS
             @Post()
       @HttpCode(204)
       create() {
-      return 'This action adds a new cat';
+      return 'Hành động này thêm một con mèo mới';
       }
       ```
       | Code | Status           | Description                                                                                                                                                             |
@@ -89,7 +89,7 @@
             return 'This action adds a new cat';
             }
         ```
-    - `@Redirect()` nhận hai đối số `url` và `statusCode`, cả hai đều là tùy chọn. Giá trị mặc định của `statusCode`là `302( Found)` nếu bị bỏ qua.
+    - `@Redirect()` nhận hai đối số `url` và `statusCode`, cả hai đều là tùy chọn. Giá trị mặc định của `statusCode` là `302( Found)` nếu bị bỏ qua.
         ```JS
             @Get()
             @Redirect('https://nestjs.com', 301)
@@ -158,7 +158,8 @@
                 Các cổng không nên sử dụng các nhà cung cấp có phạm vi yêu cầu vì họ phải hoạt động như các cổng đơn. Mỗi cổng bao bọc một ổ cắm thực và không thể được khởi tạo nhiều lần.
               ```
           - `Controller scope`
-            - Bộ điều khiển cũng có thể có phạm vi, áp dụng cho tất cả các trình xử lý phương thức yêu cầu được khai báo trong bộ điều khiển đó. Giống như phạm vi trình cung cấp, phạm vi của bộ điều khiển khai báo thời gian tồn tại của nó. Đối với bộ điều khiển phạm vi yêu cầu, một phiên bản mới được tạo cho mỗi yêu cầu gửi đến và được thu thập rác khi yêu cầu đã hoàn tất xử lý.
+            - Bộ điều khiển cũng có thể có phạm vi, áp dụng cho tất cả các trình xử lý phương thức yêu cầu được khai báo trong bộ điều khiển đó.
+            - Đối với bộ điều khiển phạm vi yêu cầu, một phiên bản mới được tạo cho mỗi yêu cầu gửi đến và được thu thập rác khi yêu cầu đã hoàn tất xử lý.
 
             - Khai báo phạm vi bộ điều khiển với `scope` thuộc tính của `ControllerOptions` đối tượng:
               ```js
@@ -175,7 +176,7 @@
                 -> `CatsController` sẽ trở thành phạm vi yêu cầu vì nó phụ thuộc vào dịch vụ được đưa vào. -> Các `CatsRepository`, mà không phải là phụ thuộc, sẽ vẫn `singleton-scoped`.
           - `Request provide`
 
-            - Để truy cập một tham chiếu đến đối tượng yêu cầu ban đầu khi sử dụng các nhà cung cấp phạm vi yêu cầu thì ta cần tiêm REQUEST đối tượng.
+            - Để truy cập một tham chiếu đến đối tượng yêu cầu ban đầu khi sử dụng các nhà cung cấp phạm vi yêu cầu thì ta cần tiêm `REQUEST` đối tượng.
             - Ex: Trong một ứng dụng dựa trên máy chủ HTTP (sử dụng `@nestjs/platform-express` hoặc `@nestjs/platform-fastify`),
             - Syntax:
               ```js
@@ -241,7 +242,7 @@
               return 'This action adds a new cat';
             }
           ```
-        - Sử dụng ValidationPipe để lọc ra các thuộc tính không được nhận bởi trình xử lý phương thức.
+        - Sử dụng `ValidationPipe` để lọc ra các thuộc tính không được nhận bởi trình xử lý phương thức.
           - `Auto-validation`
             - Ràng buộc `ValidationPipe` ở cấp ứng dụng, để đảm bảo tất cả các điểm cuối được bảo vệ khỏi việc nhận dữ liệu không chính xác.
               ```js
@@ -332,39 +333,42 @@
           }
         }
       ```
-    - **Dependency injection**:
+- **Dependency injection (DI)** && **Inversion of Control (IoC)** 
+  - Tổng quan:
+  - ![NestJS](image/IOCDI.png)
+      - `Dependency Inversion`: Đây là một nguyên lý để thiết kế và viết code.
+      - `Inversion of Control`: Là một `design pattern` được tạo ra để code có thể tuân thủ nguyên lý `Dependency Inversion`. 
+        - Có nhiều cách hiện thực `pattern` này: `ServiceLocator`, `Event`, `Delegate`, … `Dependency Injection` là một trong các cách đó.
+          - `Dependency Injection`: Đây là một cách để hiện thực `IOC` . 
+            - Các module phụ thuộc (dependency) sẽ được inject vào module cấp cao.
+            - Một số DI container: `Unity`, `StructureMap` v…v, (hỗ trợ việc cài đặt và áp dụng DI vào code)
+              - 
+            - > Có thể hiểu `DI` một cách đơn giản như sau:
+              - 1.
+                - Các module không giao tiếp trực tiếp với nhau, mà thông qua `interface`.
+                - Module cấp thấp sẽ `implement interface`, module cấp cao sẽ gọi module cấp thấp thông qua interface.
+                  - Ex: Để giao tiếp với `database`, ta có `interface IDatabase`, các module cấp thấp là `XMLDatabase`, `SQLDatabase`. Module cấp cao là `CustomerBusiness` sẽ chỉ sử dụng `interface IDatabase`.
+              - 2. Việc khởi tạo các module cấp thấp sẽ do DI Container thực hiện.
+                  - Ex: Trong `module CustomerBusiness`, ta sẽ không khởi tạo `IDatabase db = new XMLDatabase()`, việc này sẽ do `DI` Container thực hiện. `Module CustomerBusiness` sẽ không biết gì về `module XMLDatabase` hay `SQLDatabase`.
+              - 3. Việc Module nào gắn với interface nào sẽ được config trong code hoặc trong file XML.
+              - 4. DI được dùng để làm giảm sự phụ thuộc giữa các module, dễ dàng hơn trong việc thay đổi module, bảo trì code và testing.
+            - Các dạng DI: Có 3 dạng `Dependency Injection`
+              - 1. `Constructor Injection`:
+                - Các `dependency` sẽ được container truyền vào (inject vào) 1 class thông qua `constructor` của class đó. Đây là cách thông dụng nhất.
+              - 2. `Setter Injection`:
+                - Các dependency sẽ được truyền vào 1 class thông qua các hàm Setter.
+              - 3. `Interface Injection`:
+                - Class cần inject sẽ implement 1 interface.
+                - Interface này chứa 1 hàm tên Inject.
+                - Container sẽ injection dependency vào 1 class thông qua việc gọi hàm Inject của interface đó. Đây là cách rườm rà và ít được sử dụng nhất.
 
-      - Là một cách để hiện thực `Inversion of Control Pattern` (Có thể coi nó là một design pattern riêng cũng được).
-        - `Inversion of Control`: Là một design pattern được tạo ra để code có thể tuân thủ nguyên lý `Dependency Inversion`. Có nhiều cách hiện thực `pattern` này: `ServiceLocator`, `Event`, `Delegate`, … `Dependency Injection` là một trong các cách đó.
-      - Các module phụ thuộc (`dependency`) sẽ được inject vào module cấp cao.
-      - Có thể hiểu Dependency Injection một cách đơn giản như sau:
-        - 1.
-          - Các module không giao tiếp trực tiếp với nhau, mà thông qua `interface`.
-          - Module cấp thấp sẽ `implement interface`, module cấp cao sẽ gọi module cấp thấp thông qua interface.
-          - Ex: Để giao tiếp với `database`, ta có `interface IDatabase`, các module cấp thấp là `XMLDatabase`, `SQLDatabase`. Module cấp cao là `CustomerBusiness` sẽ chỉ sử dụng `interface IDatabase`.
-        - 2.
-          - Việc khởi tạo các module cấp thấp sẽ do DI Container thực hiện.
-          - Ex: Trong `module CustomerBusiness`, ta sẽ không khởi tạo `IDatabase db = new XMLDatabase()`, việc này sẽ do `DI` Container thực hiện. `Module CustomerBusiness` sẽ không biết gì về `module XMLDatabase` hay `SQLDatabase`.
-        - 3. Việc Module nào gắn với interface nào sẽ được config trong code hoặc trong file XML.
-        - 4. DI được dùng để làm giảm sự phụ thuộc giữa các module, dễ dàng hơn trong việc thay đổi module, bảo trì code và testing.
-      - Các dạng DI: Có 3 dạng `Dependency Injection`
-
-        - 1. `Constructor Injection`:
-          - Các `dependency` sẽ được container truyền vào (inject vào) 1 class thông qua `constructor` của class đó. Đây là cách thông dụng nhất.
-        - 2. `Setter Injection`:
-          - Các dependency sẽ được truyền vào 1 class thông qua các hàm Setter.
-        - 3. `Interface Injection`:
-          - Class cần inject sẽ implement 1 interface.
-          - Interface này chứa 1 hàm tên Inject.
-          - Container sẽ injection dependency vào 1 class thông qua việc gọi hàm Inject của interface đó. Đây là cách rườm rà và ít được sử dụng nhất.
-
-      - Ưu điểm và khuyết điểm của DI
-        - | Ưu điểm                                                                                 | Khuyết điểm                                                                             |
-          | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-          | Giảm sự kết dính giữa các module                                                        | Khái niệm DI khá “khó tiêu”, các developer mới sẽ gặp khó khăn khi học                  |
-          | Code dễ bảo trì, dễ thay thế module                                                     | Sử dụng interface nên đôi khi sẽ khó debug, do không biết chính xác module nào được gọi |
-          | Rất dễ test và viết `Unit Test`                                                         | Các object được khởi tạo toàn bộ ngay từ đầu, có thể làm giảm performance               |
-          | Dễ dàng thấy quan hệ giữa các module (Vì các dependecy đều được inject vào constructor) | Làm tăng độ phức tạp của code        
+            - Ưu điểm và khuyết điểm của DI
+              - | Ưu điểm                                                                                 | Khuyết điểm                                                                             |
+                | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+                | Giảm sự kết dính giữa các module                                                        | Khái niệm DI khá “khó tiêu”, các developer mới sẽ gặp khó khăn khi học                  |
+                | Code dễ bảo trì, dễ thay thế module                                                     | Sử dụng interface nên đôi khi sẽ khó debug, do không biết chính xác module nào được gọi |
+                | Rất dễ test và viết `Unit Test`                                                         | Các object được khởi tạo toàn bộ ngay từ đầu, có thể làm giảm performance               |
+                | Dễ dàng thấy quan hệ giữa các module (Vì các dependecy đều được inject vào constructor) | Làm tăng độ phức tạp của code        
     - `Scopes`:
       - Các nhà cung cấp thường có vòng đời (`"scope"`) được đồng bộ hóa với vòng đời ứng dụng. 
       - Khi ứng dụng được khởi động, mọi phụ thuộc phải được giải quyết và do đó mọi trình cung cấp phải được khởi tạo.
