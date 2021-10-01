@@ -1,4 +1,4 @@
-## Custom route decorators
+## 10. Custom route decorators
 
 Nest được xây dựng dựa trên một tính năng ngôn ngữ gọi là decorators. Decorator là một khái niệm nổi tiếng trong nhiều ngôn ngữ lập trình được sử dụng phổ biến, nhưng trong thế giới JavaScript, chúng vẫn còn tương đối mới. Đây là một định nghĩa đơn giản:
 
