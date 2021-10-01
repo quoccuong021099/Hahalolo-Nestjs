@@ -7,8 +7,8 @@
 - Đầu tiên, xác định một provider. `@Injectable()` decorator đánh dấu lớp `CatsService` là một `provider`.
 
 ```ts
-import { Injectable } from '@nestjs/common';
-import { Cat } from './interfaces/cat.interface';
+import { Injectable } from "@nestjs/common";
+import { Cat } from "./interfaces/cat.interface";
 
 @Injectable()
 export class CatsService {
@@ -23,11 +23,11 @@ export class CatsService {
 - Sau đó, yêu cầu `Nest inject provider` vào lớp `controller`:
 
 ```ts
-import { Controller, Get } from '@nestjs/common';
-import { CatsService } from './cats.service';
-import { Cat } from './interfaces/cat.interface';
+import { Controller, Get } from "@nestjs/common";
+import { CatsService } from "./cats.service";
+import { Cat } from "./interfaces/cat.interface";
 
-@Controller('cats')
+@Controller("cats")
 export class CatsController {
   constructor(private catsService: CatsService) {} // here
 
@@ -41,9 +41,9 @@ export class CatsController {
 - Cuối cùng đăng ký `provider` với `Nest IoC container`:
 
 ```ts
-import { Module } from '@nestjs/common';
-import { CatsController } from './cats/cats.controller';
-import { CatsService } from './cats/cats.service';
+import { Module } from "@nestjs/common";
+import { CatsController } from "./cats/cats.controller";
+import { CatsService } from "./cats/cats.service";
 
 @Module({
   controllers: [CatsController],
@@ -109,7 +109,7 @@ providers: [
 - Cú pháp `useValue` hữu ích để inject vào một giá trị không đổi, đưa một thư viện bên ngoài vào vùng chứa Nest hoặc thay thế một triển khai thực bằng một đối tượng giả.
 
 ```ts
-import { CatsService } from './cats.service';
+import { CatsService } from "./cats.service";
 
 const mockCatsService = {
   /* mock implementation
@@ -128,3 +128,25 @@ const mockCatsService = {
 })
 export class AppModule {}
 ```
+
+- Trong ví dụ này, `token CatsService` sẽ phân giải thành đối tượng giả `mockCatsService`. useValue yêu cầu một giá trị – trong trường hợp này là một đối tượng theo nghĩa đen có giao diện giống với lớp `CatsService` mà nó đang thay thế. Do kiểu gõ cấu trúc của TypeScript, bạn có thể sử dụng bất kỳ đối tượng nào có interface tương thích, bao gồm một đối tượng theo nghĩa đen hoặc một instance lớp được khởi tạo bằng new.
+
+### Non-class-based provider tokens
+
+- Đôi khi, chúng ta có thể muốn sự linh hoạt khi sử dụng chuỗi hoặc ký hiệu làm token DI. Ví dụ:
+
+```ts
+import { connection } from "./connection";
+
+@Module({
+  providers: [
+    {
+      provide: "CONNECTION",
+      useValue: connection,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+- Trong ví dụ này, chúng tôi đang liên kết một token có giá trị chuỗi (‘CONNECTION’) với một đối tượng connection đã có từ trước mà chúng tôi đã nhập từ một tệp bên ngoài.

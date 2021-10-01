@@ -11,6 +11,7 @@ import {
   Query,
   Req,
   UseFilters,
+  UsePipes,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateCatDto } from './create-cat.dto';
@@ -23,8 +24,9 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(@Param() params): string {
+  getHello(@Param(new ValidationPipe()) params): string {
     console.log(params);
+    return 'a';
     // throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
     // ghi đè thông báo
@@ -43,13 +45,14 @@ export class AppController {
     // throw new BadRequestException();
 
     // Exception filters
-    throw new HttpExceptionFilter();
+    // throw new HttpExceptionFilter();
 
     // return this.appService.getHello();
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  @UsePipes(new ValidationPipe())
+  async findOne(@Param('id') id: number) {
     return this.appService.findOne(id);
   }
 
@@ -85,7 +88,8 @@ export class AppController {
 
   // validation pipe với class-validator
   @Post()
-  async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
+  @UsePipes(new ValidationPipe())
+  async create(@Body() createCatDto: CreateCatDto) {
     return this.appService.create(createCatDto);
   }
 }

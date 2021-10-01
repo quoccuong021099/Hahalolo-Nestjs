@@ -76,7 +76,7 @@ Cấu trúc bên trên gắn guard vào mọi handler do controller này khai b�
 
 ```TypeScript
 const app = await NestFactory.create(AppModule);
-app.useGlobalGuards(new RolesGuard());
+ap.useGlobalGuards(new RolesGuard());p
 ```
 
 Guards toàn cục được sử dụng trên toàn bộ ứng dụng, cho mọi controller và mọi route handler. Về mặt dependency injection, các guards toàn cầu được đăng ký từ bên ngoài của bất kỳ mô-đun nào (với useGlobalGuards() như trong ví dụ trên) không thể inject dependencies vì điều này được thực hiện bên ngoài ngữ cảnh của bất kỳ mô-đun nào. Để giải quyết vấn đề này, bạn có thể thiết lập bảo vệ trực tiếp từ bất kỳ mô-đun nào bằng cách sử dụng cấu trúc sau:

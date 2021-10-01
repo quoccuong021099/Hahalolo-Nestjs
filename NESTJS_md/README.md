@@ -22,13 +22,13 @@
 - Ví dụ:
 
 ```ts
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from "@nestjs/common";
 
-@Controller('cats')
+@Controller("cats")
 export class CatsController {
   @Get()
   findAll(): string {
-    return 'This action returns all cats';
+    return "This action returns all cats";
   }
 }
 ```
@@ -56,16 +56,17 @@ export class CatsController {
 - Ta có thể truy cập vào request object bằng cách cung cấp Nest để inject nó bằng cách thêm @Req() decorator vào signature của handler.
 
 - ```ts
-  import { Controller, Get, Req } from '@nestjs/common';
-  import { Request } from 'express';
-  @Controller('cats')
+  import { Controller, Get, Req } from "@nestjs/common";
+  import { Request } from "express";
+  @Controller("cats")
   export class CatsController {
     @Get()
     findAll(@Req() request: Request): string {
-      return 'This action returns all cats';
+      return "This action returns all cats";
     }
   }
   ```
+
 - `Request object` đại diện cho request HTTP và các thuộc tính của chuỗi query, request, parameters, HTTP headers, và body.
 
 - Trong hầu hết các trường hợp, không cần thiết phải lấy các thuộc tính theo cách thủ công. Thay vào đó, ta có thể sử dụng các decorator chuyên dụng, chẳng hạn như @Body() hoặc @Query(), sẵn có dùng được luôn.
@@ -75,16 +76,16 @@ export class CatsController {
 - Khi muốn cung cấp một endpoint để tạo các bản ghi mới. Đối với điều này, hãy tạo POST handler:
 
 - ```ts
-  import { Controller, Get, Post } from '@nestjs/common';
-  @Controller('cats')
+  import { Controller, Get, Post } from "@nestjs/common";
+  @Controller("cats")
   export class CatsController {
     @Post()
     create(): string {
-      return 'This action adds a new cat';
+      return "This action adds a new cat";
     }
     @Get()
     findAll(): string {
-      return 'This action returns all cats';
+      return "This action returns all cats";
     }
   }
   ```
@@ -212,8 +213,8 @@ export class CatsController {
 - Để tạo được ta cần phải import controller vào module
 
 - ```ts
-  import { Module } from '@nestjs/common';
-  import { CatsController } from './cats/cats.controller';
+  import { Module } from "@nestjs/common";
+  import { CatsController } from "./cats/cats.controller";
   @Module({
     controllers: [CatsController],
   })
@@ -232,8 +233,8 @@ export class CatsController {
 - Service sẽ chịu trách nhiệm lưu trữ và truy xuất dữ liệu và được thiết kế để sử dụng bởi Controller.
 
 - ```ts
-  import { Injectable } from '@nestjs/common';
-  import { Cat } from './interfaces/cat.interface';
+  import { Injectable } from "@nestjs/common";
+  import { Cat } from "./interfaces/cat.interface";
   @Injectable()
   export class CatsService {
     private readonly cats: Cat[] = [];
@@ -253,12 +254,12 @@ export class CatsController {
 - Để truy xuất CatsService, chúng ta sử dụng nó bên trong CatsController:
 
 ```ts
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { CreateCatDto } from './dto/create-cat.dto';
-import { CatsService } from './cats.service';
-import { Cat } from './interfaces/cat.interface';
+import { Controller, Get, Post, Body } from "@nestjs/common";
+import { CreateCatDto } from "./dto/create-cat.dto";
+import { CatsService } from "./cats.service";
+import { Cat } from "./interfaces/cat.interface";
 
-@Controller('cats')
+@Controller("cats")
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
@@ -301,10 +302,10 @@ export class CatsController {
 - Để chỉ ra Provider là tùy chọn, hãy sử dụng `@Optional()` decorator trong signature của Provider.
 
 - ```ts
-  import { Injectable, Optional, Inject } from '@nestjs/common';
+  import { Injectable, Optional, Inject } from "@nestjs/common";
   @Injectable()
   export class HttpService<T> {
-    constructor(@Optional() @Inject('HTTP_OPTIONS') private httpClient: T) {}
+    constructor(@Optional() @Inject("HTTP_OPTIONS") private httpClient: T) {}
   }
   ```
 
@@ -313,23 +314,23 @@ export class CatsController {
 - Kỹ thuật mà chúng tôi đã sử dụng cho đến nay được gọi là inject dựa trên constructor, vì các Provider được đưa vào thông qua constructor. Trong một số trường hợp rất cụ thể, inject dựa trên thuộc tính có thể hữu ích. Ví dụ: nếu top-level class của bạn phụ thuộc vào một hoặc nhiều Provider, việc chuyển chúng lên bằng cách gọi super() trong các lớp con từ constructor có thể rất tẻ nhạt. Để tránh điều này, bạn có thể sử dụng trình @Inject() decorator ở cấp thuộc tính.
 
 - ```ts
-  import { Injectable, Inject } from '@nestjs/common';
+  import { Injectable, Inject } from "@nestjs/common";
   @Injectable()
   export class HttpService<T> {
-    @Inject('HTTP_OPTIONS')
+    @Inject("HTTP_OPTIONS")
     private readonly httpClient: T;
   }
   ```
-- Nếu class không mở rộng Provider khác` thì nên sử dụng inject dựa trên constructor.
+- Nếu class không mở rộng Provider khác thì nên sử dụng inject dựa trên constructor.
 
 ## Provider registration
 
 - Chúng ta cần đăng ký Service với Nest để nó có thể thực hiện việc inject. Để thực hiện việc này bằng cách chỉnh sửa tệp module (app.module.ts) và thêm Service vào mảng providers của @Module() decorator.
 
 - ```ts
-  import { Module } from '@nestjs/common';
-  import { CatsController } from './cats/cats.controller';
-  import { CatsService } from './cats/cats.service';
+  import { Module } from "@nestjs/common";
+  import { CatsController } from "./cats/cats.controller";
+  import { CatsService } from "./cats/cats.service";
   @Module({
     controllers: [CatsController],
     providers: [CatsService],
@@ -364,9 +365,9 @@ export class CatsController {
 - Ví dụ: chúng ta muốn chia sẻ một thực thể của CatsService giữa một số module khác. Để làm điều đó, trước tiên chúng ta cần `export provider CatsService` bằng cách thêm nó vào mảng exports của module, như được hiển thị bên dưới:
 
 - ```ts
-  import { Module } from '@nestjs/common';
-  import { CatsController } from './cats.controller';
-  import { CatsService } from './cats.service';
+  import { Module } from "@nestjs/common";
+  import { CatsController } from "./cats.controller";
+  import { CatsService } from "./cats.service";
   @Module({
     controllers: [CatsController],
     providers: [CatsService],
@@ -395,9 +396,9 @@ export class CatsController {
 - Một class module cũng có thể inject các providers.
 
 ```ts
-import { Module } from '@nestjs/common';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
+import { Module } from "@nestjs/common";
+import { CatsController } from "./cats.controller";
+import { CatsService } from "./cats.service";
 
 @Module({
   controllers: [CatsController],
@@ -413,9 +414,9 @@ export class CatsModule {
 - Khi muốn cung cấp một tập hợp các providers nên có sẵn ở mọi nơi ngay lập tức, hãy đặt module toàn cục với @Global() decorator.
 
 ```ts
-import { Module, Global } from '@nestjs/common';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
+import { Module, Global } from "@nestjs/common";
+import { CatsController } from "./cats.controller";
+import { CatsService } from "./cats.service";
 
 @Global()
 @Module({
@@ -430,7 +431,7 @@ export class CatsModule {}
 
 ## Dynamic modules (module động)
 
-- Chưa rõ
+## Chưa rõ
 
 ==========================================
 
@@ -463,9 +464,9 @@ export class CatsModule {}
 - Không có chỗ cho middleware trong `@Module() decorator`. Thay vào đó, chúng ta phải thiết lập chúng bằng phương thức `configure()` của lớp module. Các module bao gồm middleware phải triển khai interface NestModule. Hãy thiết lập LoggerMiddleware ở cấp AppModule.
 
 ```ts
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
+import { Module, NestModule, MiddlewareConsumer } from "@nestjs/common";
+import { LoggerMiddleware } from "./common/middleware/logger.middleware";
+import { CatsModule } from "./cats/cats.module";
 
 @Module({
   imports: [CatsModule],
@@ -474,7 +475,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
-      .forRoutes({ path: 'cats', method: RequestMethod.GET });
+      .forRoutes({ path: "cats", method: RequestMethod.GET });
   }
 }
 ```
@@ -505,9 +506,9 @@ export class AppModule implements NestModule {
   consumer
     .apply(LoggerMiddleware)
     .exclude(
-      { path: 'cats', method: RequestMethod.GET },
-      { path: 'cats', method: RequestMethod.POST },
-      'cats/(.*)',
+      { path: "cats", method: RequestMethod.GET },
+      { path: "cats", method: RequestMethod.POST },
+      "cats/(.*)"
     )
     .forRoutes(CatsController);
   ```
@@ -515,7 +516,7 @@ export class AppModule implements NestModule {
 ## Functional middleware
 
 ```ts
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 
 export function logger(req: Request, res: Response, next: NextFunction) {
   console.log(`Request...`);
@@ -628,7 +629,7 @@ async findAll() {
 ```ts
 export class ForbiddenException extends HttpException {
   constructor() {
-    super('Forbidden', HttpStatus.FORBIDDEN);
+    super("Forbidden", HttpStatus.FORBIDDEN);
   }
 }
 ```
@@ -646,45 +647,45 @@ async findAll() {
 
 - Nest cung cấp một tập hợp các exception tiêu chuẩn kế thừa từ HttpException cơ sở. Chúng được hiển thị từ gói @nestjs/common và đại diện cho nhiều exception HTTP phổ biến nhất:
 
-  - BadRequestException
+  - BadRequestException (400)
 
-  - UnauthorizedException
+  - UnauthorizedException (401)
 
-  - NotFoundException
+  - NotFoundException (404)
 
-  - ForbiddenException
+  - ForbiddenException (403)
 
-  - NotAcceptableException
+  - NotAcceptableException (406)
 
-  - RequestTimeoutException
+  - RequestTimeoutException (408)
 
-  - ConflictException
+  - ConflictException (409)
 
-  - GoneException
+  - GoneException (410)
 
-  - HttpVersionNotSupportedException
+  - HttpVersionNotSupportedException (505)
 
-  - PayloadTooLargeException
+  - PayloadTooLargeException (413)
 
-  - UnsupportedMediaTypeException
+  - UnsupportedMediaTypeException (415)
 
-  - UnprocessableEntityException
+  - UnprocessableEntityException (422)
 
-  - InternalServerErrorException
+  - InternalServerErrorException (500)
 
-  - NotImplementedException
+  - NotImplementedException (501)
 
-  - ImATeapotException
+  - ImATeapotException (418)
 
-  - MethodNotAllowedException
+  - MethodNotAllowedException (405)
 
-  - BadGatewayException
+  - BadGatewayException (502)
 
-  - ServiceUnavailableException
+  - ServiceUnavailableException (503)
 
-  - GatewayTimeoutException
+  - GatewayTimeoutException (504)
 
-  - PreconditionFailedException
+  - PreconditionFailedException (412)
 
 ## Exception filters
 
@@ -696,8 +697,8 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { Request, Response } from "express";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -814,7 +815,7 @@ async findOne(
 - Một ValidationPipe đơn giản. Ban đầu, chúng ta sẽ chỉ cần lấy một giá trị đầu vào và ngay lập tức trả về cùng một giá trị, hoạt động giống như một hàm nhận dạng.
 
 ```ts
-import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+import { PipeTransform, Injectable, ArgumentMetadata } from "@nestjs/common";
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
@@ -835,7 +836,7 @@ export class ValidationPipe implements PipeTransform {
 
 ```ts
 export interface ArgumentMetadata {
-  type: 'body' | 'query' | 'param' | 'custom';
+  type: "body" | "query" | "param" | "custom";
   metatype?: Type<unknown>;
   data?: string;
 }
