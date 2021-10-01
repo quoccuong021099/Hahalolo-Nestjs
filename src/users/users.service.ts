@@ -1,9 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable, Optional } from '@nestjs/common';
+import { response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './interfaces/user.interface';
 
 @Injectable()
-export class UsersService {
+export class UsersService<T> {
+  constructor(
+    @Optional() @Inject('USERS_SERVICE_OPTIONS') private httpClient: T,
+  ) {}
+
   private readonly users: User[] = [
     { id: 1, name: 'xanh', age: 15 },
     { id: 2, name: 'Tao', age: 29 },
@@ -17,6 +22,8 @@ export class UsersService {
   }
 
   findAll(): User[] {
+    console.log('fafa', this.httpClient);
+
     return this.users;
   }
 
@@ -27,8 +34,21 @@ export class UsersService {
     return this.users;
   }
 
-
   findById(userId: number) {
     return this.users.find((user) => user.id === userId);
   }
+
+  updateUser(newName: string, newAge: number, userId: number) {
+    const user = this.users.find((item) => item.id == userId);
+    if (user) {
+      user.age = newAge;
+      user.name = newName;
+      user.update = 'Mới Update';
+    }
+    console.log('update');
+
+    return this.users;
+  }
+
+ 
 }

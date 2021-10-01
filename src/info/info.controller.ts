@@ -1,4 +1,11 @@
-import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { ForbiddenExceptionC } from 'src/customException/forbidden.exception';
 import { InfoService } from './info.service';
 import { info } from './interfaces/info.interface';
@@ -8,9 +15,14 @@ export class InfoController {
   // sử dụng DI
   constructor(private infoService: InfoService) {}
 
+  // @Get()
+  // async findAll(): Promise<info[]> {
+  //   return this.infoService.getAllInfo();
+  // }
+
   @Get()
-  async findAll(): Promise<info[]> {
-    return this.infoService.getAllInfo();
+  getAll(): string {
+    return 'Here is Info';
   }
 
   @Get('/2')
@@ -21,6 +33,14 @@ export class InfoController {
     //   HttpStatus.BAD_REQUEST,
     // );
     throw new ForbiddenExceptionC();
+  }
 
+  @Get(':age')
+  findOne(
+    @Param('age')
+    age: number,
+  ): info {
+    const info = this.infoService.findByAge(age)
+    return info;
   }
 }

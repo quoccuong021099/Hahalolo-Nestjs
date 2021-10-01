@@ -23,6 +23,7 @@
 4. main.ts: Sử dụng NestFactory để khởi tạo ứng dụng.
 
 ## **Dependency Injection là gì?**
+
 - Dependency Injection là kỹ thuật tách một class độc lập với các biến phụ thuộc. Trong lập trình hướng đối tượng, chúng ta luôn phải làm việc với nhiều class. Dependency là một loại quan hệ giữa hai class mà trong đó một class hoạt động độc lập và class còn lại phụ thuộc vào class kia.
 
 ## **Controller**
@@ -42,6 +43,122 @@ nest g controller users
 ![controller](https://images.viblo.asia/01989a88-739d-407d-8c52-10d8633d8b18.png)
 
 - Đặc biệt Nest cho phép ràng buộc dữ liệu gửi lên từ request giúp ngăn chặn những dữ liệu không hợp lệ trước khi thực hiện xử lý, đó là **DTO** [Data Transfer Object].
+
+### **Routing**
+
+- Sử dụng decorator @Controller() để dễ dang nhóm một tập các route liên quan.
+
+```ts
+  @Controller('users')
+  export class UsersController {
+      // /user
+      @Get()
+      findAll() {
+        return 'Day la router user';
+      }
+
+```
+
+### **Request object**
+
+- Handler thường cần truy cập vào các chi tiết request của client. Ta có thể truy cập vào request object bằng cách inject nó bằng cách thêm @Req() vào signature của handler
+
+```ts
+  @Controller('users')
+  export class UsersController {
+      // /user
+      @Get()
+      findAll(@Req(): request: Request): string {
+        return `request`;
+      }
+
+```
+
+### **Resources**
+
+- Để tạo các bản ghi mới ta dùng @Post()
+- Nest cung cấp decorate cho tất cả các phương thức HTTP tiêu chuẩn: **@Get(), @Post(), @Put(), @Delete(), @Patch(), @Options(), and @Head()**. Ngoài ra **@All()** xác định một endpoint-handle tất cả chúng.
+
+```ts
+  @Post()
+  create(): string {
+    return 'This action adds a new user';
+  }
+```
+
+### **Route wildcards**
+
+- Pattern dựa trên route cũng được hỗ trợ. Ví dụ, dấu hình sao (\*) được sử dụng làm wildcard (ký tự đại diện), và sẽ khớp với bất kỳ tổ hợp ký tự nào.
+
+```ts
+@Get('ab*cd')
+findAll() {
+  return 'This route uses a wildcard';
+```
+
+### **Status code**
+
+- Status code – response luôn mặc định là 200, ngoài trừ các POST request sẽ là 201. Ta có thể dễ dàng thay đổi hành vi này bằng thêm @HttpCode(…) decorator ở handler-level.
+
+```ts
+@Post()
+@HttpCode(204)
+create() {
+  return 'This action adds a new user';
+}
+```
+
+### **Headers**
+
+- Để chỉ định một tùy chỉnh response header, bạn có thể sử dụng một @Header() decorator
+
+```ts
+ @Get()
+  @Header('Cache-Control', 'none')
+  findAll(@Req() request: Request): string {
+    return `REQUEST ${request.body.name}`;
+  }
+```
+
+### **Redirection**
+
+- Để redirect một response tới một URL cụ thể, bạn có thể sử dụng @Redirect() decorator
+- @Redirect() nhận 2 đối số (arguments), url và statusCode, cả 2 đều là tùy chọn. Giá trị mặc định của statusCode is 302 (Found) nếu bị bỏ qua không truyền gì.
+
+```ts
+ @Get('/red')
+  @Redirect('http://localhost:3000/info', 302)
+  redirect(@Query('id') id) {
+    if (id && id == 1) {
+      return { url: 'http://localhost:3000/users/1' };
+    }
+  }
+```
+
+### **Route parameters**
+
+- Các route với đường dẫn tĩnh sẽ không hoạt động khi bạn cần chấp nhận dữ liệu động như một phần của request (ví dụ: GET /cat/1 để nhận cat có id 1). Để xác định các route với các tham số, ta có thể thêm các token route parameter trong đường dẫn của route để nắm bắt giá trị động tại vị trí đó URL request. Token route parameter trong @Get() decorator ví dụ dưới thể hiện cách sử dụng này. Các tham số route được khai báo theo cách này có thể được truy cập bằng cách sử dụng @Param() decorator, cần được thêm vào method signature.
+
+- @Param() được sử dụng để decorate một phương thức tham số và làm cho các tham số route có sẵn dưới dạng thuộc tính của tham số phương thức được decorated đó bên trong phần thân của phương thức.
+
+```ts
+  @Get(':id')
+  findOne(
+    @Param(
+      'id',
+    )
+    id: number,
+  ): User {
+    const user = this.usersService.findById(id);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return user;
+  }
+```
+
+### **Request payloads**
+- DTO là một đối tượng xác định cách dữ liệu sẽ được gửi qua mạng
 
 ## **Module**
 
@@ -65,9 +182,7 @@ export class UsersModule {}
 
   - **providers**: Có nhiệm vụ khởi tạo và cung cấp các service mà sẽ được controller trong module sẽ sử dụng đến.
   - **controllers**: Có nhiệm vụ khởi tạo những controller đã được xác định trong module.
-
   - **imports**: Có nhiệm vụ import những thành phần của một module khác mà module sẽ sử dụng.
-
   - **exports**: Có nhiệm vụ export các thành phần của provider và các module khác sẻ import để sử dụng.
 
 - Cách tạo 1 module
@@ -98,7 +213,7 @@ export class UsersModule {}
 
 #### **Global Module**
 
-- Nếu bạn không muốn phải import một module nào đó quá nhiều lần thì Nest cung cấp @Global() cho phép bạn sử một module từ module khác mà không cần import. Như vậy chúng ta có thể sử dụng service của các module khác rất dễ dàng phải không. Chỉ cần thêm @Global() như dưới đây là có thể biến nó trở thành global module.
+- Nếu bạn không muốn phải import một module nào đó quá nhiều lần thì Nest cung cấp @Global() cho phép bạn sử một module từ module khác mà không cần import. Như vậy chúng ta có thể sử dụng service của các module khác rất dễ dàng . Chỉ cần thêm @Global() như dưới đây là có thể biến nó trở thành global module.
 
 ```TypeScript
 import { Module, Global } from '@nestjs/common';
@@ -200,6 +315,7 @@ export class UsersService {
 #### **- Applying middleware**
 
 - Cách thêm middleware đối với một phương thức yêu cầu cụ thể bằng cách chuyển một đối tượng chứa đường dẫn route và phương thức request đến phương thức forRoutes() khi định cấu hình middleware
+
   ```TypeScript
   export class AppModule {
     configure(consumer: MiddlewareConsumer) {
@@ -385,6 +501,36 @@ throw new ForbiddenExceptionC();
   - Mở rộng hành vi function cơ bản
   - Ghi đè hoàn toàn một function tùy thuộc vào các điều kiện cụ thể (ví dụ: cho mục đích lưu vào bộ nhớ đệm)
 
-
 ## Custom providers
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Những thứ k hiểu
+- Controller 
+  - Sub-Domain Routing
+  - Scopes
+
+
+ -->
