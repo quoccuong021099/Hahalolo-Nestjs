@@ -15,6 +15,7 @@
 - ![NestJS](image/structure.png)
 - app.controller.ts: Chứa các `router` để xử lý các `request` và trả về `reponse` cho client.
 - app.controller.spec.ts: Có nhiệm vụ viết các `uni-test` cho các controller.
+    - (Một Unit là một thành phần PM nhỏ nhất mà ta có thể kiểm tra được như các hàm `(Function)`, thủ tục `(Procedure)`, lớp `(Class)`, hoặc các phương thức `(Method)`.)
 - app.module.ts: `Root module` của ứng dụng.
 - app.service.ts: `Service` chứ các logic mà `controller` sẽ dùng đến.
 - main.ts: Sử dụng `Factory` để khởi tạo ứng dụng
@@ -129,7 +130,7 @@
     - `Scopes`
 
       - Trong Nest hầu hết mọi thứ đều được chia sẻ qua các yêu cầu gửi đến.
-      - Kết nối đến cơ sở dữ liệu, các dịch vụ singleton với trạng thái toàn cục, v.v.
+      - Kết nối đến cơ sở dữ liệu, các dịch vụ `singleton` với trạng thái toàn cục, v.v.
       - Node.js không tuân theo Mô hình không trạng thái đa luồng yêu cầu / phản hồi
         - Trong đó: Mọi yêu cầu được xử lý bởi một luồng riêng biệt nên việc sử dụng singleton là an toàn.
       - Có những trường hợp cạnh khi thời gian tồn tại dựa trên yêu cầu của bộ điều khiển có thể là hành vi mong muốn.
@@ -203,7 +204,7 @@
 
     - `Asynchronicity`
       - NestJS sử dụng `TypeScript` ( ngôn ngữ bậc cao `JavaScript` ) nên việc trích xuất dữ liệu chủ yếu là không đồng bộ.
-      - Mọi hàm không đồng bộ phải trả về a Promise (Có nghĩa là có thể trả về một giá trị hoãn lại mà Nest sẽ có thể tự giải quyết)
+      - Mọi hàm không đồng bộ phải trả về `Promise` (Có nghĩa là có thể trả về một giá trị hoãn lại mà Nest sẽ có thể tự giải quyết)
         - Ex:
           ```js
             @Get()
@@ -338,9 +339,9 @@
       - Các module phụ thuộc (`dependency`) sẽ được inject vào module cấp cao.
       - Có thể hiểu Dependency Injection một cách đơn giản như sau:
         - 1.
-          - Các module không giao tiếp trực tiếp với nhau, mà thông qua interface.
+          - Các module không giao tiếp trực tiếp với nhau, mà thông qua `interface`.
           - Module cấp thấp sẽ `implement interface`, module cấp cao sẽ gọi module cấp thấp thông qua interface.
-          - Ex: Để giao tiếp với database, ta có interface IDatabase, các module cấp thấp là XMLDatabase, SQLDatabase. Module cấp cao là CustomerBusiness sẽ chỉ sử dụng interface IDatabase.
+          - Ex: Để giao tiếp với `database`, ta có `interface IDatabase`, các module cấp thấp là `XMLDatabase`, `SQLDatabase`. Module cấp cao là `CustomerBusiness` sẽ chỉ sử dụng `interface IDatabase`.
         - 2.
           - Việc khởi tạo các module cấp thấp sẽ do DI Container thực hiện.
           - Ex: Trong `module CustomerBusiness`, ta sẽ không khởi tạo `IDatabase db = new XMLDatabase()`, việc này sẽ do `DI` Container thực hiện. `Module CustomerBusiness` sẽ không biết gì về `module XMLDatabase` hay `SQLDatabase`.
@@ -645,10 +646,10 @@
   - Trình `@Module()` trang trí lấy một đối tượng duy nhất có các thuộc tính mô tả module:
       | Content | Description |
       | ----------- | ----------- |
-      | providers | the providers that will be instantiated by the Nest injector and that may be shared at least across this module |
-      | controllers | the set of controllers defined in this module which have to be instantiated |
-      | imports | the list of imported modules that export the providers which are required in this module |
-      | exports | the subset of providers that are provided by this module and should be available in other modules which import this module |
+      | providers | các nhà cung cấp sẽ được khởi tạo bởi bộ cung cấp Nest và ít nhất có thể được chia sẻ trên module này |
+      | controllers | bộ điều khiển được xác định trong module này phải được khởi tạo |
+      | imports | danh sách các module đã nhập để xuất các nhà cung cấp được yêu cầu trong module này |
+      | exports | tập hợp con các nhà cung cấp được cung cấp bởi module này và sẽ có sẵn trong các module khác nhập module này |
     - Module đóng gói các nhà cung cấp theo mặc định
   - `Feature modules`
     - Các `CatsController` và `CatsService` được chuyển vào một module tính năng.
@@ -734,7 +735,7 @@
 
       - `Global module` chỉ nên được đăng ký một lần , thường là `root` hoặc `core modules`
 
-    - `Dynamic modules`
+    - **Dynamic modules**
 
       - Hệ thống module Nest bao gồm một tính năng mạnh mẽ được gọi là `dynamic modules` (module động) .
       - Tính năng này cho phép bạn dễ dàng tạo các modules có thể tùy chỉnh có thể đăng ký và cấu hình động các nhà cung cấp.
@@ -744,83 +745,324 @@
 
         - B1: Xác định `UsersModule` để cung cấp và xuất `UsersService`. `UsersModule` là module máy chủ cho `UsersService`.
 
-        ```js
-        import { Module } from "@nestjs/common";
-        import { UsersService } from "./users.service"; // Cung cấp và xuất UsersService.
+            ```js
+            import { Module } from "@nestjs/common";
+            import { UsersService } from "./users.service"; // Cung cấp và xuất UsersService.
 
-        @Module({
-          providers: [UsersService],
-          exports: [UsersService],
-        })
-        export class UsersModule {}
-        ```
+            @Module({
+              providers: [UsersService],
+              exports: [UsersService],
+            })
+            export class UsersModule {}
+            ```
 
-        - B2: Xác định một `AuthModule`, nhập khẩu UsersModule, làm cho UsersModulecác nhà cung cấp đã xuất của có sẵn bên trong `AuthModule`
+        - B2: Xác định một `AuthModule`, nhập khẩu UsersModule, làm cho UsersModule các nhà cung cấp đã xuất của có sẵn bên trong `AuthModule`
 
-        ```js
-        import { Module } from "@nestjs/common";
-        import { AuthService } from "./auth.service";
-        import { UsersModule } from "../users/users.module";
+            ```js
+            import { Module } from "@nestjs/common";
+            import { AuthService } from "./auth.service";
+            import { UsersModule } from "../users/users.module";
 
-        @Module({
-          imports: [UsersModule],
-          providers: [AuthService],
-          exports: [AuthService],
-        })
-        export class AuthModule {}
-        ```
-        - B3: Những cấu trúc này cho phép đưa UsersService vào
-        ```js
-          import { Injectable } from '@nestjs/common';
-          import { UsersService } from '../users/users.service';
+            @Module({
+              imports: [UsersModule],
+              providers: [AuthService],
+              exports: [AuthService],
+            })
+            export class AuthModule {}
+            ```
+            - B3: Những cấu trúc này cho phép đưa UsersService vào
+            ```js
+              import { Injectable } from '@nestjs/common';
+              import { UsersService } from '../users/users.service';
 
-          @Injectable()
-          export class AuthService {
-            constructor(private usersService: UsersService) {}
-            /*
-              Triển khai sử dụng this.usersService
-            */
-          }
-        ```
+              @Injectable()
+              export class AuthService {
+                constructor(private usersService: UsersService) {}
+                /*
+                  Triển khai sử dụng this.usersService
+                */
+              }
+            ```
         - Giải thích: Nest `UsersService` có sẵn bên trong `AuthModule` bởi:
           - 1. Khởi tạo `UsersModule`, bao gồm nhập tạm thời các module khác mà `UsersModule` chính nó sử dụng và giải quyết chuyển tiếp bất kỳ phụ thuộc nào (xem Nhà cung cấp tùy chỉnh ).
           - 2. Khởi tạo `AuthModule` và làm cho `UsersModule` các nhà cung cấp đã xuất của có sẵn cho các thành phần trong `AuthModule` (giống như khi chúng đã được khai báo trong `AuthModule`).
           - 3. Tiêm một thể hiện của `UsersService` trong `AuthService`.
     - `Dynamic module use case`
-      - Với ràng buộc module tĩnh, không có cơ hội để module tiêu thụ ảnh hưởng đến cách các nhà cung cấp từ module chủ được định cấu hình
+      - Với ràng buộc module tĩnh, không có cơ hội để module sử dụng ảnh hưởng đến cách các providers từ module chủ được định cấu hình.
+      
     - `Config module example`
-      ```js
-        import { Module } from '@nestjs/common';
-        import { AppController } from './app.controller';
-        import { AppService } from './app.service';
-        import { ConfigModule } from './config/config.module';
+      - Ex: Chương cấu hình `configuration chapter`
+        - Yêu cầu: Làm cho `ConfigModule` chấp nhận một đối tượng `options` để tùy chỉnh nó.
+        - Sử dụng mẫu mã hóa cố định vị trí của tệp `.env` trong thư mục gốc của dự án.
+        - Module động cung cấp khả năng truyền các tham số vào module đang được nhập để có thể thay đổi hành vi của nó
+          - Ex: Về việc nhập tĩnh `ConfigModule` (tức là một cách tiếp cận không có khả năng ảnh hưởng đến hành vi của module đã nhập)
+            ```js
+              import { Module } from '@nestjs/common';
+              import { AppController } from './app.controller';
+              import { AppService } from './app.service';
+              import { ConfigModule } from './config/config.module';
 
-        @Module({
-          imports: [ConfigModule.register({ folder: './config' })],
-          controllers: [AppController],
-          providers: [AppService],
-        })
-        export class AppModule {}
-      ```
-      - Giải thích: Hãy xem điều gì đang xảy ra trong ví dụ động ở trên. Các bộ phận chuyển động là gì?
+              @Module({
+                imports: [ConfigModule],
+                controllers: [AppController],
+                providers: [AppService],
+              })
+              export class AppModule {}
+            ```
 
-        - 1. `ConfigModule` là một lớp bình thường, vì vậy chúng ta có thể suy ra rằng nó phải có một phương thức tĩnh được gọi `register()`. Nó tĩnh vì đang gọi nó trên `ConfigModule` lớp, không phải trên một thể hiện của lớp.
-        - 2. Các `register()` phương pháp được định nghĩa có thể chấp nhận bất kỳ đối số đầu vào. 
-          - Trong trường hợp này chấp nhận một `options` đối tượng đơn giản với các thuộc tính phù hợp, đây là trường hợp điển hình.
-        - 3. `register()` phương thức phải trả về một cái gì đó giống như `module` 
-          - Vì giá trị trả về của nó xuất hiện trong `imports` danh sách quen thuộc , mà đã thấy cho đến nay bao gồm một danh sách các `module`.
+          -Ex: Về xem xét việc import module động (truyền vào một đối tượng cấu hình)
+            ```js
+              import { Module } from '@nestjs/common';
+              import { AppController } from './app.controller';
+              import { AppService } from './app.service';
+              import { ConfigModule } from './config/config.module';
+
+              @Module({
+                // Trả về 1 đối tượng có giao diện DynamicModule
+                imports: [ConfigModule.register({ folder: './config' })],
+                controllers: [AppController],
+                providers: [AppService],
+              })
+              export class AppModule {}
+            ```
+          - 
+          - Giải thích: Hãy xem điều gì đang xảy ra trong ví dụ động ở trên. Các bộ phận chuyển động là gì?
+
+            - 1. `ConfigModule` là một lớp bình thường, vì vậy chúng ta có thể suy ra rằng nó phải có một phương thức tĩnh được gọi `register()`. Nó tĩnh vì đang gọi nó trên `ConfigModule` lớp, không phải trên một thể hiện của lớp.
+            - 2. Các `register()` phương pháp được định nghĩa có thể chấp nhận bất kỳ đối số đầu vào. 
+              - Trong trường hợp này chấp nhận một `options` đối tượng đơn giản với các thuộc tính phù hợp, đây là trường hợp điển hình.
+            - 3. `register()` phương thức phải trả về một cái gì đó giống như `module` 
+              - Vì giá trị trả về của nó xuất hiện trong `imports` danh sách quen thuộc , mà đã thấy cho đến nay bao gồm một danh sách các `module`.
+          > Trên thực tế, phương thức `register()` sẽ trả về là một `DynamicModule`
+          - Module động phải trả về một đối tượng có cùng `interface` chính xác, và thuộc tính bổ sung được gọi là module.
     - `Module configuration` : Tùy chỉnh hành vi của `ConfigModule` là truyền cho nó một `options` đối tượng trong `register()` phương thức tĩnh.
       - Ex:
-      ```js
-        import { Module } from '@nestjs/common';
-        import { AppController } from './app.controller';
-        import { AppService } from './app.service';
-        import { ConfigModule } from './config/config.module';
+        ```js
+          import { Module } from '@nestjs/common';
+          import { AppController } from './app.controller';
+          import { AppService } from './app.service';
+          import { ConfigModule } from './config/config.module'; // Một máy chủ để cung cấp và xuất một dịch vụ có thể inject vào – ConfigService – để các providers khác sử dụng
 
-        @Module({
-          imports: [ConfigModule.register({ folder: './config' })],
-          controllers: [AppController],
-          providers: [AppService],
-        })
-        export class AppModule {}
-      ```
+          @Module({
+            imports: [ConfigModule.register({ folder: './config' })],
+            controllers: [AppController],
+            providers: [AppService],
+          })
+          export class AppModule {}
+        ```
+        - Thực hiện một vài thay đổi đối với dịch vụ để tùy chỉnh hành vi của nó dựa trên các thuộc tính từ đối tượng tùy chọn
+            ```js
+              import { Injectable } from '@nestjs/common';
+              import * as dotenv from 'dotenv';
+              import * as fs from 'fs';
+              import { EnvConfig } from './interfaces';
+
+              @Injectable()
+              export class ConfigService {
+                private readonly envConfig: EnvConfig;
+
+                constructor() {
+                  const options = { folder: './config' };
+                  //ConfigService tìm tệp .env trong thư mục đã chỉ định trong các tùy chọn.
+                  const filePath = `${process.env.NODE_ENV || 'development'}.env`;
+                  const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
+                  this.envConfig = dotenv.parse(fs.readFileSync(envFile));
+                }
+
+                get(key: string): string {
+                  return this.envConfig[key];
+                }
+              }
+            ```
+            - Đưa đối tượng tùy chọn từ bước `register()` vào `ConfigService` bằng cách sử dụng phương pháp `dependency injection`.
+            -Giải quyết ràng buộc đối tượng tùy chọn với vùng chứa IoC bằng `static register()`
+            - Ex:
+              ```js
+                import { DynamicModule, Module } from '@nestjs/common';
+                import { ConfigService } from './config.service';
+
+                @Module({})
+                export class ConfigModule {
+                  static register(options): DynamicModule {
+                    return {
+                      module: ConfigModule,
+                      providers: [
+                        {
+                          provide: 'CONFIG_OPTIONS',
+                          useValue: options,
+                        },
+                        ConfigService,
+                      ],
+                      exports: [ConfigService],
+                    };
+                  }
+                }
+              ```
+            -  Đưa provider `‘CONFIG_OPTIONS’` vào `ConfigService`.
+            - Ex:
+                ```js
+                  import * as dotenv from 'dotenv';
+                  import * as fs from 'fs';
+                  import { Injectable, Inject } from '@nestjs/common';
+                  import { EnvConfig } from './interfaces';
+
+                  @Injectable()
+                  export class ConfigService {
+                    private readonly envConfig: EnvConfig;
+
+                    constructor(@Inject('CONFIG_OPTIONS') private options) {
+                      const filePath = `${process.env.NODE_ENV || 'development'}.env`;
+                      const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
+                      this.envConfig = dotenv.parse(fs.readFileSync(envFile));
+                    }
+
+                    get(key: string): string {
+                      return this.envConfig[key];
+                    }
+                  }
+                ```
+              - Có thể sử dụng `(‘CONFIG_OPTIONS’)` như một hằng số trong một tệp riêng biệt.
+                  ```js
+                    export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
+                  ```
+              - 
+  - `Asynchronous providers` 
+    - Asynchronous providers
+      - Đôi khi, việc khởi động ứng dụng sẽ bị trì hoãn cho đến khi hoàn thành một hoặc nhiều tác vụ không đồng bộ . 
+      - Sử dụng `async/await` . 
+      - Ex:
+        ```js
+          {
+          provide: 'ASYNC_CONNECTION',
+          useFactory: async () => {
+              const connection = await createConnection(options);
+              return connection;
+            },
+          }
+        ```
+    - Injection
+      - Các nhà cung cấp không đồng bộ được mã thông báo của họ tiêm vào các thành phần khác, giống như bất kỳ nhà cung cấp nào khác. Sử dụng cấu trúc `@Inject('ASYNC_CONNECTION')`.
+    - Example
+      - Công thức `TypeORM` có một ví dụ quan trọng hơn về trình cung cấp không đồng bộ.
+      - SQL (TypeORM)
+        - Chương này chỉ áp dụng cho TypeScript
+        - B1: Cài đặt thư viện
+          >$ npm install --save typeorm mysql
+        - B2: 
+          - Thiết lập kết nối với cơ sở dữ liệu bằng `createConnection()` hàm được nhập từ `typeorm` gói. - Các `createConnection()` chức năng trả về một `Promise`, và do đó chúng ta phải tạo ra một nhà cung cấp `async`.
+            > database.providers.ts
+            ```js
+              import { createConnection } from 'typeorm';
+
+              export const databaseProviders = [
+                {
+                  provide: 'DATABASE_CONNECTION',
+                  useFactory: async () => await createConnection({
+                    type: 'mysql',
+                    host: 'localhost',
+                    port: 3306,
+                    username: 'root',
+                    password: 'root',
+                    database: 'test',
+                    entities: [
+                        __dirname + '/../**/*.entity{.ts,.js}',
+                    ],
+                    synchronize: true, // Không nên được sử dụng trong sản xuất - nếu không có thể bị mất dữ liệu sản xuất.
+                  }),
+                },
+              ];
+            ```
+        - B3: Xuất các nhà cung cấp này để làm cho chúng có thể truy cập được cho phần còn lại của ứng dụng.
+          > database.module.ts
+              ```js
+              import { Module } from '@nestjs/common';
+              import { databaseProviders } from './database.providers';
+
+              @Module({
+                providers: [...databaseProviders],
+                exports: [...databaseProviders],
+              })
+              export class DatabaseModule {}
+              ```
+        - Bây giờ chúng ta có thể chèn `Connection` đối tượng bằng cách sử dụng `@Inject()decorator`. 
+        - Mỗi lớp phụ thuộc vào `Connection` nhà cung cấp không đồng bộ sẽ đợi cho đến khi `Promise` giải quyết xong.
+      - `Repository pattern`
+        - Các `TypeORM` hỗ trợ các mẫu thiết kế kho lưu trữ, do đó mỗi thực thể có Repository riêng của mình. Các kho này có thể được lấy từ kết nối cơ sở dữ liệu.
+        - Khởi tạo 
+          - > photo.entity.ts
+              ```js
+                import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+                @Entity()
+                export class Photo {
+                  @PrimaryGeneratedColumn()
+                  id: number;
+
+                  @Column({ length: 500 })
+                  name: string;
+
+                  @Column('text')
+                  description: string;
+
+                  @Column()
+                  filename: string;
+
+                  @Column('int')
+                  views: number;
+
+                  @Column()
+                  isPublished: boolean;
+                }
+              ```
+        - Thực `Photo` thể thuộc về `photo` thư mục. Thư mục này đại diện cho `PhotoModule`. 
+        - Tạo một nhà cung cấp Kho lưu trữ :
+          - > photo.providers.ts
+              ```js
+              import { Connection } from 'typeorm';
+              import { Photo } from './photo.entity';
+
+              export const photoProviders = [
+                {
+                  provide: 'PHOTO_REPOSITORY',
+                  useFactory: (connection: Connection) => connection.getRepository(Photo),
+                  inject: ['DATABASE_CONNECTION'],
+                },
+              ];
+              ```
+        - Bây giờ có thể đưa nó `Repository<Photo>` vào `PhotoService` bằng cách sử dụng `@Inject()decorator`:
+          - > photo.service.ts
+              ```js
+                import { Injectable, Inject } from '@nestjs/common';
+                import { Repository } from 'typeorm';
+                import { Photo } from './photo.entity';
+
+                @Injectable()
+                export class PhotoService {
+                  constructor(
+                    @Inject('PHOTO_REPOSITORY')
+                    private photoRepository: Repository<Photo>,
+                  ) {}
+
+                  async findAll(): Promise<Photo[]> {
+                    return this.photoRepository.find();
+                  }
+                }
+              ```
+        - Kết nối cơ sở dữ liệu không đồng bộ, nhưng Nest làm cho quá trình này hoàn toàn ẩn đối với người dùng cuối. Các `PhotoRepository` đang chờ kết nối `db`, và `PhotoService` bị trì hoãn cho đến khi kho đã sẵn sàng để sử dụng. Toàn bộ ứng dụng có thể bắt đầu khi mỗi lớp được khởi tạo.
+          - > photo.module.ts
+              ```js
+                import { Module } from '@nestjs/common';
+                import { DatabaseModule } from '../database/database.module';
+                import { photoProviders } from './photo.providers';
+                import { PhotoService } from './photo.service';
+
+                @Module({
+                  imports: [DatabaseModule],
+                  providers: [
+                    ...photoProviders,
+                    PhotoService,
+                  ],
+                })
+                export class PhotoModule {}
+              ```
+
