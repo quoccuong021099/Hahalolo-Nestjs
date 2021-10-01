@@ -17,4 +17,9 @@ export class InfoService {
   getAllInfo(): info[] {
     return this.info;
   }
+  findByAge(ages: number) {
+    console.log(this.info.find((item) => item.age === ages));
+    
+    return this.info.find((item) => item.age === ages);
+  }
 }

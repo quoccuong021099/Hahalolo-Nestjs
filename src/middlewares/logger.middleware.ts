@@ -10,8 +10,10 @@ export function loggerMiddleware(
 
   const users: User = req.body;
   users.isAdult = false;
+  users.middleware="Tuổi nhỏ hơn 15"
   if (users.age > 15) {
     users.isAdult = true;
+    users.middleware="Tuổi lớn hơn 15"
   }
   // console.log('res', res);
   console.log(`Call MDW`);

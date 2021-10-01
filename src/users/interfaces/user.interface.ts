@@ -4,4 +4,6 @@ export interface User {
   age: number;
   isAdult?: boolean;
   nameMid?: string;
+  middleware?: string;
+  update?: string;
 }
