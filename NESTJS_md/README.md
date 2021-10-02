@@ -42,3 +42,7 @@ Dependency Injection có thể được thực hiện dựa trên các quy tắc
 
 - Các class sẽ không phụ thuộc trực tiếp lẫn nhau mà thay vào đó chúng sẽ liên kết với nhau thông qua một Interface hoặc base class (đối với một số ngôn ngữ không hỗ trợ Interface)
 - Việc khởi tạo các class sẽ do các Interface quản lí thay vì class phụ thuộc nó
+
+## IoC
+
+IoC còn có tên gọi đầy đủ là Inversion of Control, được hiểu là một nguyên lý thiết kế ứng dụng trong công nghệ phần mềm. Kiến trúc phần mềm khi áp dụng nguyên lý thiết kế này sẽ đảo ngược quyền điều khiển so với kiểu lập trình hướng thủ tục. Nếu như trong lập trình hướng thủ tục, các đoạn mã được thêm vào sẽ gọi các thư viện thì ở IoC lại hoàn toàn khác. Những IoC container sẽ chích những dependencies khi khởi tạo bean.
