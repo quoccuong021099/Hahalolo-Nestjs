@@ -171,9 +171,6 @@ create() {
   }
 ```
 
-### **Request payloads**
-- DTO là một đối tượng xác định cách dữ liệu sẽ được gửi qua mạng
-
 ## **Module**
 
 ![controller](https://images.viblo.asia/13526c5b-6edc-481e-a040-3e9a0639d178.png)
