@@ -336,13 +336,14 @@
 - **Dependency injection (DI)** && **Inversion of Control (IoC)** 
   - Tổng quan:
   - ![NestJS](image/IOCDI.png)
-      - `Dependency Inversion`: Đây là một nguyên lý để thiết kế và viết code.
+      - `Dependency Inversion`: Đây là một nguyên lý để thiết kế và viết code (Nguyên lý cuối cùng trong `SOLID`).
+          - 1. Các module cấp cao không nên phụ thuộc vào các modules cấp thấp. Cả 2 nên phụ thuộc vào abstraction.
+          - 2. Interface (abstraction) không nên phụ thuộc vào chi tiết, mà ngược lại. ( Các class giao tiếp với nhau thông qua interface, không phải thông qua implementation.)
       - `Inversion of Control`: Là một `design pattern` được tạo ra để code có thể tuân thủ nguyên lý `Dependency Inversion`. 
         - Có nhiều cách hiện thực `pattern` này: `ServiceLocator`, `Event`, `Delegate`, … `Dependency Injection` là một trong các cách đó.
           - `Dependency Injection`: Đây là một cách để hiện thực `IOC` . 
             - Các module phụ thuộc (dependency) sẽ được inject vào module cấp cao.
             - Một số DI container: `Unity`, `StructureMap` v…v, (hỗ trợ việc cài đặt và áp dụng DI vào code)
-              - 
             - > Có thể hiểu `DI` một cách đơn giản như sau:
               - 1.
                 - Các module không giao tiếp trực tiếp với nhau, mà thông qua `interface`.
@@ -369,6 +370,137 @@
                 | Code dễ bảo trì, dễ thay thế module                                                     | Sử dụng interface nên đôi khi sẽ khó debug, do không biết chính xác module nào được gọi |
                 | Rất dễ test và viết `Unit Test`                                                         | Các object được khởi tạo toàn bộ ngay từ đầu, có thể làm giảm performance               |
                 | Dễ dàng thấy quan hệ giữa các module (Vì các dependecy đều được inject vào constructor) | Làm tăng độ phức tạp của code        
+            - `Dependency` : Là những module cấp thấp, hoặc cái service gọi từ bên ngoài. 
+                - Các module cấp cao sẽ gọi các module cấp thấp. 
+                - Module cấp cao sẽ phụ thuộc và module cấp thấp -> dependency.
+                - ![NestJS](image/dependencies.png)
+                - Ex: Hàm Checkout của class `Cart`:  sẽ khởi tạo và gọi module Database, module EmailSender, module Logger, các module này chính là các dependency.
+                    ```js
+                        public class Cart
+                        {
+                            public void Checkout(int orderId, int userId)
+                            {
+                                Database db = new Database();
+                                db.Save(orderId);
+                        
+                                Logger log = new Logger();
+                                log.LogInfo("Order has been checkout");
+                        
+                                EmailSender es = new EmailSender();
+                                es.SendEmail(userId);
+                            }
+                        }
+                    ```
+                      - Rất khó test 
+                      - Muốn thay đổi phải sửa toàn bộ các chỗ khởi tạo và gọi các module này. Việc làm này rất mất thời gian, dễ gây lỗi.
+                      - Sau này về lâu dài, code sẽ trở nên “kết dính.
+                > Inversion of Control và Dependency Injection đã ra đời để giải quyết những vấn đề này.
+                - Xử lí
+                - Ex: 
+                    ```js
+                        // Interface
+                      public interface IDatabase
+                      {
+                          void Save(int orderId);
+                      }
+                      
+                      public interface ILogger
+                      {
+                          void LogInfo(string info);
+                      }
+                      
+                      public interface IEmailSender
+                      {
+                          void SendEmail(int userId);
+                      }
+                      
+                      // Các Module implement các Interface
+                      public class Logger : ILogger
+                      {
+                          public void LogInfo(string info)
+                          {
+                              //...
+                          }
+                      }
+                      
+                      public class Database : IDatabase
+                      {
+                          public void Save(int orderId)
+                          {
+                              //...
+                          }
+                      }
+                      
+                      public class EmailSender : IEmailSender
+                      {
+                          public void SendEmail(int userId)
+                          {
+                              //...
+                          }
+                      }
+                    ```
+                  - Mục đích ta có thể dễ dàng thay đổi, swap các module cấp thấp mà không ảnh hưởng tới module Cart
+                  - Hàm checkout mới:
+                      ```js
+                          public void Checkout(int orderId, int userId)
+                            {
+                          // Nếu muốn thay đổi database, ta chỉ cần thay dòng code dưới
+                          // Các Module XMLDatabase, SQLDatabase phải implement IDatabase
+                          //IDatabase db = new XMLDatabase(); 
+                          //IDatebase db = new SQLDatabase();
+                          IDatabase db = new Database();
+                          db.Save(orderId);
+                      
+                          ILogger log = new Logger();
+                          log.LogInfo("Order has been checkout");
+                      
+                          IEmailSender es = new EmailSender();
+                          es.SendEmail(userId);
+                          }
+                      ```
+                    - Để dễ quản lý, ta có thể bỏ tất cả những hàm khởi tạo module vào constructor của class Cart.
+                        ```js
+                            public class Cart
+                              {
+                                  private readonly IDatabase _db;
+                                  private readonly ILogger _log;
+                                  private readonly IEmailSender _es;
+                              
+                                  public Cart()
+                                  {
+                                      _db = new Database();
+                                      _log = new Logger();
+                                      _es = new EmailSender();
+                                  }
+                              
+                                  public void Checkout(int orderId, int userId)
+                                  {
+                                      _db.Save(orderId);
+                                      _log.LogInfo("Order has been checkout");
+                                      _es.SendEmail(userId);
+                                  }
+                              }
+                        ```
+                    - Nếu có nhiều module khác cần dùng tới Logger, Database thì ta dụng `Dependency Injection`
+                      - Các Module cấp thấp sẽ được inject (truyền vào) vào Module cấp cao thông qua `Constructor` hoặc thông qua `Properties`
+                      - Ex:
+                        ```js
+                          public Cart(IDatabase db, ILogger log, IEmailSender es)
+                            {
+                                    _db = db;
+                                    _log = log;
+                                    _es = es;
+                            }
+                            
+                            //Dependency Injection một cách đơn giản nhất
+                            Cart myCart = new Cart(new Database(),
+                                              new Logger(), new EmailSender());
+                            //Khi cần thay đổi database, logger
+                            myCart = new Cart(new XMLDatabase(),
+                                          new FakeLogger(), new FakeEmailSender());
+
+                        ```
+
     - `Scopes`:
       - Các nhà cung cấp thường có vòng đời (`"scope"`) được đồng bộ hóa với vòng đời ứng dụng. 
       - Khi ứng dụng được khởi động, mọi phụ thuộc phải được giải quyết và do đó mọi trình cung cấp phải được khởi tạo.
