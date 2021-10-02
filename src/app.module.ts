@@ -6,11 +6,11 @@ import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { InfoController } from './info/info.controller';
 import { InfoModule } from './info/info.module';
-import { DemoClassMiddeWare } from './middlewares/class.middleware';
+import { DemoClassMiddleWare } from './middlewares/class.middleware';
 import { InfoService } from './info/info.service';
 import { UsersService } from './users/users.service';
 
-const mockInfoService = { ageDemo: 10 };
+// const mockInfoService = { ageDemo: 10 };
 
 // const configServiceProvider = {
 //   provide: ConfigServide,
@@ -20,20 +20,20 @@ const mockInfoService = { ageDemo: 10 };
 @Module({
   imports: [UsersModule, InfoModule],
   controllers: [AppController, UsersController, InfoController],
-  // providers: [AppService],
-  providers: [
-    {
-      provide: AppService,
-      // provide: 'CONNECTION',
-      useValue: mockInfoService,
-      useClass: InfoService,
-    },
-  ],
+  providers: [AppService],
+  // providers: [
+  //   {
+  //     provide: AppService,
+  //     // provide: 'CONNECTION',
+  //     useValue: mockInfoService,
+  //     useClass: InfoService,
+  //   },
+  // ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(loggerMiddleware, DemoClassMiddeWare)
+      .apply(loggerMiddleware, DemoClassMiddleWare)
       .exclude({
         path: 'users',
         method: RequestMethod.GET,

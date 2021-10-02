@@ -25,7 +25,21 @@
 ## **Dependency Injection là gì?**
 
 - Dependency Injection là kỹ thuật tách một class độc lập với các biến phụ thuộc. Trong lập trình hướng đối tượng, chúng ta luôn phải làm việc với nhiều class. Dependency là một loại quan hệ giữa hai class mà trong đó một class hoạt động độc lập và class còn lại phụ thuộc vào class kia.
-
+- Dependency injection được định nghĩa là kỹ thuật lập trình có khả năng hỗ trợ tách một class độc lập với những biến phụ thuộc khác.
+- Ví dụ: 
+  - Khi một lớp A sử dụng các chức năng của lớp B thì có nghĩa là lớp A có một phụ thuộc với lớp B
+- Có 3 loại Dependency Injection khá phổ biến:
+  - Constructor Injection: Những biến phụ thuộc này sẽ được cung cấp dựa vào một hàm tạo lớp mới
+  - Setter Injection : Client sẽ đưa ra một phương thức dạng setter mà khi đó Injector sẽ được sử dụng nhằm Dependency injection 
+  - Interface Injection: Các biến phụ thuộc sẽ đưa một method để có thể đưa được biên dịch này vào bất kỳ loại máy khách chạy ngang qua nào. Khi đó, máy khách cần phải triển khai một giao diện có chứa setter method để có thể chấp nhận cho các biến phụ thuộc. 
+- Nhiệm vụ của Dependency Injection 
+    - Dependency Injection được tạo ra và sử dụng để giải quyết các nhiệm vụ như sau
+      - Tạo các đối tượng
+      - Nắm bắt các đối tượng nào sẽ phù hợp với lớp nào. 
+      - Thực hiện cung cấp cho những lớp đó toàn bộ mọi đối tượng. 
+- Dependency Injection còn có nhiệm vụ thực hiện đảo ngược kiểm soát — khái niệm đằng sau DI
+  - Một số lớp không nên được cấu hình tương tự với các biến phụ tĩnh mà cần cấu hình bởi 1 số lớp khác từ bên ngoài. Đây chính là nguyên tắc trong S.O.L.I.D, cũng là 5 nguyên tắc cơ bản liên quan đến lập trình hướng đối tượng cần nắm rõ. Dựa theo nguyên tắc này thì một lớp cần nên dựa vào abstraction chứ không phải concretions (dựa theo thuật ngữ đơn giản, mã hóa cứng – hard-coded).
+  - Theo đó, thì một lớp nên tập trung vào hoàn thành những nhiệm vụ của mình chứ không cần tạo ra các đối tượng cần thiết dành cho việc thực hiện nhiệm vụ đó. 
 ## **Controller**
 
 ![controller](https://docs.nestjs.com/assets/Controllers_1.png)

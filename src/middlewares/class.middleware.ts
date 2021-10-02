@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { User } from 'src/users/interfaces/user.interface';
 
 @Injectable()
-export class DemoClassMiddeWare implements NestMiddleware {
+export class DemoClassMiddleWare implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     console.log('call mdw class');
     const user: User = req.body;

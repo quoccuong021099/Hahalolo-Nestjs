@@ -22,8 +22,6 @@ export class UsersService<T> {
   }
 
   findAll(): User[] {
-    console.log('fafa', this.httpClient);
-
     return this.users;
   }
 
@@ -45,10 +43,7 @@ export class UsersService<T> {
       user.name = newName;
       user.update = 'Mới Update';
     }
-    console.log('update');
-
     return this.users;
   }
 
- 
 }
