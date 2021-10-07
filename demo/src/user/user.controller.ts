@@ -11,7 +11,7 @@ export class UserController {
   @Get()
   // @UseGuards(RolesGuard)
   //   @SetMetadata('roles', 'admin')
-  @CustomRoles('admin')
+  @CustomRoles('')
   getAll() {
     // Authorized
     return this.userService.getAll();

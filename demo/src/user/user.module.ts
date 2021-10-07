@@ -1,9 +1,19 @@
-import { Module } from '@nestjs/common';
+import {
+  Module,
+  OnApplicationBootstrap,
+  OnApplicationShutdown,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
 @Module({
   controllers: [UserController],
-  providers: [UserService]
+  providers: [UserService],
 })
-export class UserModule {}
+export class UserModule implements OnApplicationShutdown {
+  onApplicationShutdown(sigal: string) {
+    console.log(`The application has been détroyed.`);
+  }
+}
