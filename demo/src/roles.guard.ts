@@ -19,7 +19,7 @@ export class RolesGuard implements CanActivate {
     if (!roles) return true;
 
     // const requiredRoles = 'admin';
-    // console.log('asdfghjkl;: ', roles.includes(requiredRoles));
+    // console.log('Không phân quyền: ', roles.includes(requiredRoles));
 
     // // Not Authorized
     // if (!roles.includes('admin')) {
@@ -29,7 +29,7 @@ export class RolesGuard implements CanActivate {
     const requiredRolesArr = !(
       roles.includes('admin') && roles.includes('manager')
     );
-    console.log('demo: ', requiredRolesArr);
+    console.log('Không phân quyền: ', requiredRolesArr);
 
     // Not Authorized
     if (requiredRolesArr) {

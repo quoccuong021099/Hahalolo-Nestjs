@@ -4,8 +4,8 @@ import { RolesGuard } from './../roles.guard';
 import { UserService } from './user.service';
 
 @Controller('user')
-@CustomRoles('manager')
 @UseGuards(RolesGuard)
+@CustomRoles('manager')
 export class UserController {
   constructor(private userService: UserService) {}
 

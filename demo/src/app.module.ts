@@ -8,10 +8,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { InterceptModule } from './intercept/intercept.module';
 import { LoggerMiddleware } from './logger.middleware';
-import { UserModule } from './user/user.module';
+import { UserModule, UserModule2 } from './user/user.module';
 
 @Module({
-  imports: [UserModule, InterceptModule],
+  imports: [UserModule, UserModule2, InterceptModule],
   controllers: [AppController],
   providers: [AppService],
 })
