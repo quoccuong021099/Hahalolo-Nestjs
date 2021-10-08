@@ -9,20 +9,30 @@ export class RolesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const user = {
-      name: 'Tim',
-      roles: ['standard-user'],
-    };
-    const roles = this.reflector.get<string>('roles', context.getHandler());
+    const roles = this.reflector.getAllAndMerge<string[]>('roles', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     console.log('RolesGuard ~ roles: ', roles);
 
     if (!roles) return true;
 
-    const requiredRoles = 'admin';
+    // const requiredRoles = 'admin';
+    // console.log('asdfghjkl;: ', roles.includes(requiredRoles));
+
+    // // Not Authorized
+    // if (!roles.includes('admin')) {
+    //   return false;
+    // }
+
+    const requiredRolesArr = !(
+      roles.includes('admin') && roles.includes('manager')
+    );
+    console.log('demo: ', requiredRolesArr);
 
     // Not Authorized
-    if (!user.roles.includes(requiredRoles)) {
+    if (requiredRolesArr) {
       return false;
     }
 

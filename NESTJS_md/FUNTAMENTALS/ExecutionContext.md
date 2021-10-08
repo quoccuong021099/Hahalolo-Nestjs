@@ -92,7 +92,7 @@ export interface RpcArgumentsHost {
    */
   getData<T>(): T;
   /**
-   * Returns the client object.
+   * Returns the context object.
    */
   getContext<T>(): T;
 }
@@ -127,7 +127,7 @@ const className = ctx.getClass().name; // "CatsController"
 
 Nest cung cấp khả năng đính kèm siêu dữ liệu tùy chỉnh để định tuyến trình xử lý thông qua decorator @SetMetadata(). Và có thể truy cập siêu dữ liệu này từ bên trong lớp để đưa ra các xử lý tiếp theo.
 
-Ví dụ về Reflection and metadata trong Guard
+Ví dụ về Reflection and metadata trong Guard:
 
 - Tạo ra decorator của riêng biệt
 - Tiêm vào Controller

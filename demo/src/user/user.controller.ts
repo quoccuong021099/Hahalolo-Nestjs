@@ -4,6 +4,7 @@ import { RolesGuard } from './../roles.guard';
 import { UserService } from './user.service';
 
 @Controller('user')
+@CustomRoles('manager')
 @UseGuards(RolesGuard)
 export class UserController {
   constructor(private userService: UserService) {}
@@ -11,7 +12,7 @@ export class UserController {
   @Get()
   // @UseGuards(RolesGuard)
   //   @SetMetadata('roles', 'admin')
-  @CustomRoles('')
+  @CustomRoles('user')
   getAll() {
     // Authorized
     return this.userService.getAll();
