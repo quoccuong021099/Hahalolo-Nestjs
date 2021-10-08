@@ -1,4 +1,4 @@
-# 5. Middleware
+<!-- # 5. Middleware
 
 - Middleware là một hàm được gọi trước khi tới handler route. Các hàm middleware có quyền truy cập vào các object request và response cũng như hàm middleware next() trong chu trình request-response của ứng dụng. Hàm middlware next thường được ký hiệu bằng một biến có tên là next.
 
@@ -54,7 +54,7 @@
   }
   ```
 
-- Có thể hạn chế thêm middleware đối với một phương thức yêu cầu cụ thể bằng cách chuyển một đối tượng chứa đường dẫn route và phương thức request đến phương thức forRoutes() khi định cấu hình middleware. 
+- Có thể hạn chế thêm middleware đối với một phương thức yêu cầu cụ thể bằng cách chuyển một đối tượng chứa đường dẫn route và phương thức request đến phương thức forRoutes() khi định cấu hình middleware.
 
   ```ts
   import {
@@ -90,8 +90,8 @@
 
 ## Middleware consumer:
 
-- MiddlewareConsumer là một class helper. Nó cung cấp một số phương pháp tích hợp middleware. Tất cả chúng có thể được xâu chuỗi 1 cách đơn giản. Phương thức forRoutes() có thể nhận được 1 chuỗi đơn, nhiều chuỗi, 1 đối tượng RouteInfo, 1 lớp controller và thậm chí nhiều lớp controller.Trong hầu hết các trường hợp, có thể sẽ chỉ chuyển 1 danh sách các controller được phân tách bằng dấu phẩy. 
-Dưới đây là 1 ví dụ với 1 controller duy nhất:
+- MiddlewareConsumer là một class helper. Nó cung cấp một số phương pháp tích hợp middleware. Tất cả chúng có thể được xâu chuỗi 1 cách đơn giản. Phương thức forRoutes() có thể nhận được 1 chuỗi đơn, nhiều chuỗi, 1 đối tượng RouteInfo, 1 lớp controller và thậm chí nhiều lớp controller.Trong hầu hết các trường hợp, có thể sẽ chỉ chuyển 1 danh sách các controller được phân tách bằng dấu phẩy.
+  Dưới đây là 1 ví dụ với 1 controller duy nhất:
 
   ```ts
   import { Module, NestModule, MiddlewareConsumer } from "@nestjs/common";
@@ -118,21 +118,21 @@ Dưới đây là 1 ví dụ với 1 controller duy nhất:
     .apply(LoggerMiddleware)
     .exclude(
       { path: "cats", method: RequestMethod.GET },
-      { path: "cats", method: RequestMethod.POST },
+      { path: "cats", method: RequestMethod.POST }
     )
     .forRoutes(CatsController);
   ```
 
 ## Functional middleware:
 
-  ```ts
-  import { Request, Response, NextFunction } from "express";
+```ts
+import { Request, Response, NextFunction } from "express";
 
-  export function logger(req: Request, res: Response, next: NextFunction) {
-    console.log(`Request...`);
-    next();
-  }
-  ```
+export function logger(req: Request, res: Response, next: NextFunction) {
+  console.log(`Request...`);
+  next();
+}
+```
 
 ## Multiple middleware:
 
@@ -206,7 +206,7 @@ Dưới đây là 1 ví dụ với 1 controller duy nhất:
 
 ## Custom exceptions:
 
-- Trong nhiều trường hợp sẽ không cần phải viết các exception tùy chỉnh và có thể sử dụng exception Nest HTTP tích hợp sẵn, như được mô tả trong phần tiếp theo. Nếu cần tạo các exception tùy chỉnh thì nên tạo hệ thống phân cấp exception của riêng mình, nơi các exception tùy chỉnh kế thừa từ lớp HttpException cơ sở. Với cách tiếp cận này, Nest sẽ nhận ra các trường hợp exception và tự động xử lý các response lỗi. 
+- Trong nhiều trường hợp sẽ không cần phải viết các exception tùy chỉnh và có thể sử dụng exception Nest HTTP tích hợp sẵn, như được mô tả trong phần tiếp theo. Nếu cần tạo các exception tùy chỉnh thì nên tạo hệ thống phân cấp exception của riêng mình, nơi các exception tùy chỉnh kế thừa từ lớp HttpException cơ sở. Với cách tiếp cận này, Nest sẽ nhận ra các trường hợp exception và tự động xử lý các response lỗi.
 
 - Custom Exception như vậy:
 
@@ -306,6 +306,7 @@ Dưới đây là 1 ví dụ với 1 controller duy nhất:
 - Ở trên đã sử dụng @UseFilters() decorator ở đây. Tương tự như @Catch() decorator, nó có thể sử dụng một instance bộ lọc duy nhất hoặc một danh sách các instance bộ lọc được phân tách bằng dấu phẩy. Ở đây đã tạo instance HttpExceptionFilter tại chỗ. Ngoài ra có thể truyền qua lớp (thay vì một instance), để lại trách nhiệm khởi tạo cho khung và cho phép dependency injection.
 
 - Thiết lập bộ lọc dưới dạng phạm vi controller:
+
   ```ts
   @UseFilters(new HttpExceptionFilter())
   export class CatsController {}
@@ -328,7 +329,7 @@ Dưới đây là 1 ví dụ với 1 controller duy nhất:
 
 ## Catch everything:
 
-- Để bắt mọi exception chưa được xử lý (bất kể loại exception), hãy để trống danh sách tham số của @Catch() decorator. 
+- Để bắt mọi exception chưa được xử lý (bất kể loại exception), hãy để trống danh sách tham số của @Catch() decorator.
 - Ví dụ: @Catch()
 
   ```ts
@@ -405,7 +406,7 @@ Dưới đây là 1 ví dụ với 1 controller duy nhất:
 
 ## Binding pipes:
 
-- Để sử dụng một pipe thì cần liên kết một instance của lớp pipe với ngữ cảnh thích hợp. Trong ví dụ ParseIntPipe, ta  muốn liên kết pipe với một phương thức route handler cụ thể và đảm bảo rằng nó chạy trước khi phương thức được gọi. Làm như vậy với cấu trúc sau thì đó sẽ là ràng buộc pipe ở cấp tham số phương thức:
+- Để sử dụng một pipe thì cần liên kết một instance của lớp pipe với ngữ cảnh thích hợp. Trong ví dụ ParseIntPipe, ta muốn liên kết pipe với một phương thức route handler cụ thể và đảm bảo rằng nó chạy trước khi phương thức được gọi. Làm như vậy với cấu trúc sau thì đó sẽ là ràng buộc pipe ở cấp tham số phương thức:
 
   ```ts
   @Get(':id')
@@ -451,7 +452,6 @@ Dưới đây là 1 ví dụ với 1 controller duy nhất:
 
   - value: là đối số phương thức hiện đang được xử lý (trước khi nó được phương thức route handler nhận).
   - metadata: là đối số phương thức hiện được xử lý
-
 
   - Đối tượng metadata có các thuộc tính sau:
     - type: Cho biết đối số là body @Body(), truy vấn @Query(), param @Param(),...
@@ -542,6 +542,7 @@ Dưới đây là 1 ví dụ với 1 controller duy nhất:
 - Nest hoạt động tốt với thư viện class-validator. Thư viện mạnh mẽ này cho phép sử dụng decorator-based validation.
 
 - Cài đặt:
+
   ```
   $ npm i --save class-validator class-transformer
   ```
@@ -632,4 +633,295 @@ Dưới đây là 1 ví dụ với 1 controller duy nhất:
   ) {
   return this.catsService.findAll({ activeOnly, page });
   }
-  ```
+  ``` -->
+
+# FUNDAMENTALS
+
+## 1. Injection scopes
+
+### 1.1. Provider scope
+
+Một provider có thể có bất kỳ phạm vi nào sau đây:
+
+- `DEFAULT`: Một instance duy nhất của provider được chia sẻ trên toàn bộ ứng dụng. Thời gian tồn tại của instance được gắn trực tiếp với vòng đời của ứng dụng. Khi ứng dụng đã được khởi động, tất cả các provider singleton đã được khởi tạo. Phạm vi Singleton được sử dụng theo mặc định.
+
+- `REQUEST`: Một instance mới của provider được tạo riêng cho mỗi request đến. Instance được thu thập sau khi request hoàn tất quá trình xử lý.
+
+- `TRANSIENT`: Các providers transient không được chia sẻ cho người dùng. Mỗi người injects vào một transient provider sẽ nhận được một instance mới.
+
+### 1.2. Usage
+
+Chỉ định phạm vi inject bằng cách truyền thuộc tính `Scope` cho đối tượng tùy chọn decorator @Injectable():
+
+```ts
+import { Injectable, Scope } from "@nestjs/common";
+
+@Injectable({ scope: Scope.REQUEST })
+export class CatsService {}
+```
+
+Tương tự, đối với các custom providers, hãy đặt thuộc tính `Scope` trong biểu mẫu dài hạn cho đăng ký provider:
+
+```ts
+{
+  provide: 'CACHE_MANAGER',
+  useClass: CacheManager,
+  scope: Scope.TRANSIENT,
+}
+```
+
+Phạm vi Singleton được sử dụng theo mặc định và không cần khai báo. Nếu bạn muốn khai báo một provider là phạm vi singleton, hãy sử dụng giá trị Scope.DEFAULT cho thuộc tính scope.
+
+### 1.3. Controller scope
+
+Controllers cũng có thể có phạm vi, áp dụng cho tất cả các phương thức request handlers được khai báo trong controller đó. Giống như phạm vi provider, phạm vi của controller khai báo thời gian tồn tại của nó. Đối với controller phạm vi request, một instance mới được tạo cho mỗi request gửi đến và được thu thập khi request đã hoàn tất xử lý.
+
+Khai báo phạm vi controller với thuộc tính scope của đối tượng ControllerOptions:
+
+```ts
+@Controller({
+  path: "cats",
+  scope: Scope.REQUEST,
+})
+export class CatsController {}
+```
+
+### 1.4. Scope hierarchy
+
+Một controller phụ thuộc vào provider phạm vi request, bản thân nó, sẽ được xác định phạm vi request.
+
+Đồ thị phụ thuộc sau: CatsController <- CatsService <- CatsRepository. Nếu CatsService nằm trong phạm vi request (và những cái khác là singletons mặc định), CatsController sẽ trở thành phạm vi request vì nó phụ thuộc vào service được đưa vào. CatsRepository, không phụ thuộc, sẽ vẫn ở phạm vi singleton.
+
+### 1.5. Request provider
+
+Trong ứng dụng dựa trên máy chủ HTTP (ví dụ: sử dụng @nestjs/platform-express hoặc @nestjs/platform-fastify), có thể muốn truy cập tham chiếu đến đối tượng request ban đầu khi sử dụng các providers phạm vi request. Có thể làm điều này bằng cách inject đối tượng REQUEST.
+
+```ts
+import { Injectable, Scope, Inject } from "@nestjs/common";
+import { REQUEST } from "@nestjs/core";
+import { Request } from "express";
+
+@Injectable({ scope: Scope.REQUEST })
+export class CatsService {
+  constructor(@Inject(REQUEST) private request: Request) {}
+}
+```
+
+Do sự khác biệt cơ bản về platform/protocol, truy cập vào request gửi đến hơi khác đối với các ứng dụng Microservice hoặc GraphQL. Trong các ứng dụng GraphQL, inject CONTEXT thay vì REQUEST:
+
+```ts
+import { Injectable, Scope, Inject } from "@nestjs/common";
+import { CONTEXT } from "@nestjs/graphql";
+
+@Injectable({ scope: Scope.REQUEST })
+export class CatsService {
+  constructor(@Inject(CONTEXT) private context) {}
+}
+```
+
+Sau đó, cấu hình giá trị context của mình (trong GraphQLModule) để chứa request làm thuộc tính của nó.
+
+### 1.6. Performance
+
+Việc sử dụng các providers theo phạm vi request sẽ có tác động đến hiệu suất ứng dụng. Mặc dù Nest cố gắng lưu vào bộ nhớ cache càng nhiều metadata càng tốt, Nest vẫn phải tạo một instance lớp theo từng request. Do đó, nó sẽ làm chậm thời gian phản hồi trung bình và kết quả đo điểm chuẩn tổng thể. Trừ khi provider phải có phạm vi request, bạn nên sử dụng phạm vi singleton mặc định.
+
+## 2. Circular dependency
+
+Sự phụ thuộc vòng tròn xảy ra khi hai lớp phụ thuộc vào nhau. Ví dụ: lớp A cần lớp B và lớp B cũng cần lớp A. Các phụ thuộc vòng tròn có thể phát sinh trong Nest giữa các mô-đun và giữa các providers.
+
+Mặc dù nên tránh các phụ thuộc vòng tròn nếu có thể, nhưng không phải lúc nào cũng có thể làm như vậy. Trong những trường hợp như vậy, Nest cho phép giải quyết sự phụ thuộc vòng tròn giữa các providers theo các cách.
+
+### 2.1. Forward reference
+
+Tham chiếu chuyển tiếp cho phép Nest tham chiếu đến các lớp chưa được xác định bằng cách sử dụng hàm forwardRef().
+
+Ví dụ: nếu CatsService và CommonService phụ thuộc vào nhau, cả hai bên của mối quan hệ có thể sử dụng @Inject() và forwardRef() để giải quyết circular dependency. Nếu không, Nest sẽ không khởi tạo chúng vì tất cả metadata cần thiết sẽ không khả dụng.
+
+```ts
+@Injectable()
+export class CatsService {
+  constructor(
+    @Inject(forwardRef(() => CommonService))
+    private commonService: CommonService
+  ) {}
+}
+```
+
+```ts
+@Injectable()
+export class CommonService {
+  constructor(
+    @Inject(forwardRef(() => CatsService))
+    private catsService: CatsService
+  ) {}
+}
+```
+
+### 2.2. ModuleRef class alternative
+
+Một giải pháp thay thế cho việc sử dụng forwardRef() là cấu trúc lại code và sử dụng lớp ModuleRef để truy xuất provider ở một phía của mối quan hệ vòng tròn.
+
+### 2.3. Module forward reference
+
+Để giải quyết circular dependencie giữa các mô-đun, sử dụng cùng một hàm forwardRef() trên cả hai phía của liên kết mô-đun.
+
+```ts
+@Module({
+  imports: [forwardRef(() => CatsModule)],
+})
+export class CommonModule {}
+```
+
+## 3. Module reference
+
+Nest cung cấp lớp ModuleRef để điều hướng danh sách nội bộ của các providers và lấy tham chiếu đến bất kỳ provider nào bằng cách sử dụng token inject của nó làm khóa tra cứu. Lớp ModuleRef cũng cung cấp một cách để khởi tạo động cho cả provider tĩnh và phạm vi. ModuleRef có thể được đưa vào một lớp theo cách thông thường:
+
+```ts
+@Injectable()
+export class CatsService {
+  constructor(private moduleRef: ModuleRef) {}
+}
+```
+
+### 3.1. Retrieving instances
+
+ModuleRef có phương thức get(). Phương thức này truy xuất provider, controller hoặc injectable tồn tại trong mô-đun hiện tại bằng cách inject token/class name của nó.
+
+```ts
+@Injectable()
+export class CatsService implements OnModuleInit {
+  private service: Service;
+  constructor(private moduleRef: ModuleRef) {}
+
+  onModuleInit() {
+    this.service = this.moduleRef.get(Service);
+  }
+}
+```
+
+Để truy xuất provider từ ngữ cảnh chung (nếu provider đã được injected trong một mô-đun khác), hay truyền { strict: false } làm đối số thứ 2 cho get().
+
+```ts
+this.moduleRef.get(Service, { strict: false });
+```
+
+### 3.2. Resolving scoped providers
+
+Để giải quyết resolve a scoped provider, hãy sử dụng phương thức resolve(), truyền token inject của provider làm đối số.
+
+```ts
+@Injectable()
+export class CatsService implements OnModuleInit {
+  private transientService: TransientService;
+  constructor(private moduleRef: ModuleRef) {}
+
+  async onModuleInit() {
+    this.transientService = await this.moduleRef.resolve(TransientService);
+  }
+}
+```
+
+### 3.3. Registering REQUEST provider
+
+Các mã nhận dạng ngữ cảnh được tạo theo cách thủ công (với ContextIdFactory.create()) đại diện cho DI sub-trees trong đó provider REQUEST không được xác định vì chúng không được hệ thống dependency injection Nest khởi tạo và quản lý.
+
+Để đăng ký đối tượng REQUEST tùy chỉnh cho DI sub-tree được tạo thủ công, hãy sử dụng phương thức ModuleRef#registerRequestByContextId() như sau:
+
+```ts
+const contextId = ContextIdFactory.create();
+this.moduleRef.registerRequestByContextId(/* YOUR_REQUEST_OBJECT */, contextId);
+```
+
+### 3.4. Getting current sub-tree
+
+Đôi khi có thể muốn giải quyết một instance của request-scoped provider trong request context. Giả sử rằng CatsService là phạm vi request và muốn giải quyết instance CatsRepository cũng được đánh dấu là provider phạm vi request. Để chia sẻ cùng một cây con vùng chứa DI, bạn phải lấy mã nhận dạng ngữ cảnh hiện tại thay vì tạo một mã mới (ví dụ: với hàm ContextIdFactory.create(), như được hiển thị ở trên). Để có được định danh ngữ cảnh hiện tại, hãy bắt đầu bằng cách đưa vào đối tượng yêu cầu bằng cách sử dụng decorator @Inject().
+
+```ts
+@Injectable()
+export class CatsService {
+  constructor(@Inject(REQUEST) private request: Record<string, unknown>) {}
+}
+```
+
+Hãy sử dụng phương thức getByRequest()của lớp ContextIdFactory để tạo một id ngữ cảnh dựa trên request object, truyền nó vào lệnh gọi resolve():
+
+### 3.5. Instantiating custom classes dynamically
+
+Để khởi tạo động một lớp chưa được đăng ký trước đó làm nhà cung cấp, hãy sử dụng phương thức create() của tham chiếu mô-đun.
+
+```ts
+@Injectable()
+export class CatsService implements OnModuleInit {
+  private catsFactory: CatsFactory;
+  constructor(private moduleRef: ModuleRef) {}
+
+  async onModuleInit() {
+    this.catsFactory = await this.moduleRef.create(CatsFactory);
+  }
+}
+```
+
+Kỹ thuật này cho phép khởi tạo có điều kiện các lớp khác nhau bên ngoài vùng chứa khung.
+
+## 4. Lazy-loading modules
+
+Theo mặc định, các mô-đun được tải nhanh, có nghĩa là ngay sau khi ứng dụng tải, tất cả các mô-đun cũng vậy, cho dù chúng có cần thiết ngay lập tức hay không. Mặc dù điều này là tốt cho hầu hết các ứng dụng, nhưng nó có thể trở thành một nút cổ chai cho các ứng dụng, nơi mà độ trễ khởi động là rất quan trọng.
+
+Tải chậm có thể giúp giảm thời gian khởi động bằng cách chỉ tải các mô-đun được yêu cầu bởi lệnh gọi chức năng không máy chủ cụ thể. Ngoài ra, bạn cũng có thể tải các mô-đun khác một cách không đồng bộ sau khi chức năng serverless "ấm" để tăng tốc thời gian khởi động cho các cuộc gọi tiếp theo hơn nữa.
+
+### 4.1. Getting started
+
+Để tải các mô-đun theo yêu cầu, Nest cung cấp lớp LazyModuleLoader có thể được đưa vào một lớp:
+
+```ts
+@Injectable()
+export class CatsService {
+  constructor(private lazyModuleLoader: LazyModuleLoader) {}
+}
+```
+
+Ngoài ra, bạn có thể lấy tham chiếu đến LazyModuleLoadernhà cung cấp từ bên trong tệp bootstrap ứng dụng của mình ( main.ts), như sau:
+
+```ts
+// "app" represents a Nest application instance
+const lazyModuleLoader = app.get(LazyModuleLoader);
+```
+
+Với điều này tại chỗ, bây giờ bạn có thể tải bất kỳ mô-đun nào bằng cách sử dụng cấu trúc sau:
+
+```ts
+const { LazyModule } = await import("./lazy.module");
+const moduleRef = await this.lazyModuleLoader.load(() => LazyModule);
+```
+
+Trong đó lazy.module.ts là tệp TypeScript xuất mô-đun Nest thông thường (không cần thay đổi thêm). Phương thức tải LazyModuleLoader # trả về tham chiếu mô-đun (của LazyModule) cho phép bạn điều hướng danh sách nội bộ của các nhà cung cấp và lấy tham chiếu đến bất kỳ nhà cung cấp nào bằng cách sử dụng mã thông báo tiêm của nó làm khóa tra cứu. Ví dụ: giả sử chúng ta có một LazyModule với định nghĩa sau:
+
+```ts
+@Module({
+  providers: [LazyService],
+  exports: [LazyService],
+})
+export class LazyModule {}
+```
+
+Với điều này, chúng tôi có thể nhận được một tham chiếu đến nhà cung cấp LazyService, như sau:
+
+```ts
+const { LazyModule } = await import("./lazy.module");
+const moduleRef = await this.lazyModuleLoader.load(() => LazyModule);
+
+const { LazyService } = await import("./lazy.service");
+const lazyService = moduleRef.get(LazyService);
+```
+
+### 4.2 Lazy-loading controllers, gateways, and resolvers
+
+Giả sử bạn đang xây dựng một REST API với một trình điều khiển Fastify bên dưới (sử dụng @nestjs/platform-fastifygói). Fastify không cho phép bạn đăng ký lộ trình sau khi ứng dụng đã sẵn sàng / nghe tin nhắn thành công. Điều đó có nghĩa là ngay cả khi chúng tôi phân tích ánh xạ tuyến được đăng ký trong bộ điều khiển của mô-đun, tất cả các tuyến được tải chậm sẽ không thể truy cập được vì không có cách nào để đăng ký chúng trong thời gian chạy.
+
+Tương tự như vậy, một số chiến lược truyền tải mà chúng tôi cung cấp như một phần của @nestjs/microservicesgói (bao gồm Kafka, gRPC hoặc RabbitMQ) yêu cầu đăng ký / nghe các chủ đề / kênh cụ thể trước khi kết nối được thiết lập. Khi ứng dụng của bạn bắt đầu nghe tin nhắn, khuôn khổ sẽ không thể đăng ký / nghe các chủ đề mới.
+
+Cuối cùng, @nestjs/graphqlgói có bật phương pháp tiếp cận mã đầu tiên tự động tạo lược đồ GraphQL một cách nhanh chóng dựa trên siêu dữ liệu. Điều đó có nghĩa là, nó yêu cầu tất cả các lớp phải được tải trước. Nếu không, sẽ không thể tạo lược đồ hợp lệ, thích hợp.
+
+### 4.3. Common use-cases
+
+Thông thường nhất, sẽ thấy các mô-đun được tải chậm trong các tình huống khi hàm worker / cron job / lambda & serverless / webhook của bạn phải kích hoạt các dịch vụ khác nhau (logic khác nhau) dựa trên các đối số đầu vào (đường dẫn tuyến đường / tham số ngày / truy vấn, v.v.). Mặt khác, các mô-đun lười tải có thể không có quá nhiều ý nghĩa đối với các ứng dụng nguyên khối, nơi mà thời gian khởi động khá không liên quan.
