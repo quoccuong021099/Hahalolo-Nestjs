@@ -764,7 +764,7 @@
             export class AppModule {}
             ```
 
-      - `Alias providers: useExisting`
+      - `Alias providers: useExisting` (Nhà cung cấp bí danh)
 
         - `useExisting` cho phép tạo các biệt hiệu cho các nhà cung cấp hiện có.
         - Điều này tạo ra hai cách để truy cập cùng một nhà cung cấp.
@@ -787,10 +787,10 @@
           export class AppModule {}
           ```
 
-      - `Non -service based providers`
+      - `Non -service based providers` (Các nhà cung cấp không dựa trên dịch vụ )
 
         - Một nhà cung cấp có thể cung cấp bất kỳ giá trị nào.
-        - Ex:
+        - Ex: Một nhà cung cấp có thể cung cấp một loạt các đối tượng cấu hình dựa trên môi trường hiện tại.
 
           ```js
           const configFactory = {
@@ -808,9 +808,9 @@
           export class AppModule {}
           ```
 
-      - `Export custom provider`
+      - `Export custom provider` (Xuất nhà cung cấp tùy chỉnh)
 
-        - Nhà cung cấp tùy chỉnh được xác định phạm vi đến `module` khai báo của nó cần được xuất để hiển thị nó với các `module` khác.
+        - Được xác định phạm vi đến `module` khai báo của nó cần được xuất để hiển thị nó với các `module` khác.
         - Để xuất một nhà cung cấp tùy chỉnh: sử dụng mã thông báo của nó hoặc đối tượng nhà cung cấp đầy đủ.
         - Ex: Xuất bằng mã thông báo
 
@@ -826,7 +826,7 @@
 
           @Module({
             providers: [connectionFactory],
-            exports: ['CONNECTION'],
+            exports: ['CONNECTION'], //
           })
           export class AppModule {}
           ```
@@ -845,7 +845,7 @@
 
           @Module({
             providers: [connectionFactory],
-            exports: [connectionFactory],
+            exports: [connectionFactory], //
           })
           export class AppModule {}
           ```
@@ -993,7 +993,7 @@
 
       - `Global module` chỉ nên được đăng ký một lần , thường là `root` hoặc `core modules`
 
-    - **Dynamic modules**
+    - **Dynamic modules** (Mô-đun động)
 
       - Hệ thống module Nest bao gồm một tính năng mạnh mẽ được gọi là `dynamic modules` (module động) .
       - Tính năng này cho phép bạn dễ dàng tạo các modules có thể tùy chỉnh có thể đăng ký và cấu hình động các nhà cung cấp.
@@ -1014,7 +1014,7 @@
           export class UsersModule {}
           ```
 
-        - B2: Xác định một `AuthModule`, nhập khẩu UsersModule, làm cho UsersModule các nhà cung cấp đã xuất của có sẵn bên trong `AuthModule`
+        - B2: Xác định một `AuthModule`, nhập khẩu `UsersModule`, làm cho `UsersModule` các nhà cung cấp đã xuất của có sẵn bên trong `AuthModule`
 
           ```js
           import { Module } from '@nestjs/common';
@@ -1029,7 +1029,7 @@
           export class AuthModule {}
           ```
 
-          - B3: Những cấu trúc này cho phép đưa UsersService vào
+          - B3: Những cấu trúc này cho phép đưa `UsersService` vào
 
           ```js
             import { Injectable } from '@nestjs/common';
@@ -1049,9 +1049,7 @@
           - 2. Khởi tạo `AuthModule` và làm cho `UsersModule` các nhà cung cấp đã xuất của có sẵn cho các thành phần trong `AuthModule` (giống như khi chúng đã được khai báo trong `AuthModule`).
           - 3. Tiêm một thể hiện của `UsersService` trong `AuthService`.
 
-    - `Dynamic module use case`
-      - Với ràng buộc module tĩnh, không có cơ hội để module sử dụng ảnh hưởng đến cách các providers từ module chủ được định cấu hình.
-    - `Config module example`
+    - `Config module example` (Về cấu hình mô-đun )
 
       - Ex: Chương cấu hình `configuration chapter`
 
@@ -1092,7 +1090,6 @@
           export class AppModule {}
           ```
 
-          -
           - Giải thích: Hãy xem điều gì đang xảy ra trong ví dụ động ở trên. Các bộ phận chuyển động là gì?
 
             - 1. `ConfigModule` là một lớp bình thường, vì vậy chúng ta có thể suy ra rằng nó phải có một phương thức tĩnh được gọi `register()`. Nó tĩnh vì đang gọi nó trên `ConfigModule` lớp, không phải trên một thể hiện của lớp.
@@ -1103,9 +1100,9 @@
 
           - Module động phải trả về một đối tượng có cùng `interface` chính xác, và thuộc tính bổ sung được gọi là module.
 
-    - `Module configuration` : Tùy chỉnh hành vi của `ConfigModule` là truyền cho nó một `options` đối tượng trong `register()` phương thức tĩnh.
+    - `Module configuration` (Cấu hình mô-đun) : Tùy chỉnh hành vi của `ConfigModule` là truyền cho nó một `options` đối tượng trong `register()` phương thức tĩnh.
 
-      - Ex:
+      - Xem lại: Thuộc tính của module tiêu thụ
 
         ```js
         import { Module } from '@nestjs/common';
@@ -1121,7 +1118,9 @@
         export class AppModule {}
         ```
 
+        - Giả sử lấy đc `options` từ `register()` method đưa vào `ConfigService`
         - Thực hiện một vài thay đổi đối với dịch vụ để tùy chỉnh hành vi của nó dựa trên các thuộc tính từ đối tượng tùy chọn
+        - Ex: Sử dụng phương pháp tiêm phụ thuộc (DI) đưa `options` đối tượng từ `register()` vào ConfigService
 
           ```js
             import { Injectable } from '@nestjs/common';
@@ -1147,9 +1146,9 @@
             }
           ```
 
-          - Đưa đối tượng tùy chọn từ bước `register()` vào `ConfigService` bằng cách sử dụng phương pháp `dependency injection`.
-            -Giải quyết ràng buộc đối tượng tùy chọn với vùng chứa IoC bằng `static register()`
-          - Ex:
+          -Giải quyết ràng buộc đối tượng tùy chọn với vùng chứa IoC bằng `static register()`
+
+          - Ex: Xác định đối tượng tùy chọn của chúng ta như một nhà cung cấp để có thể đưa vào `ConfigService`
 
             ```js
             import { DynamicModule, Module } from '@nestjs/common';
@@ -1161,6 +1160,7 @@
                 return {
                   module: ConfigModule,
                   providers: [
+                    //
                     {
                       provide: 'CONFIG_OPTIONS',
                       useValue: options,
@@ -1173,8 +1173,8 @@
             }
             ```
 
-          - Đưa provider `‘CONFIG_OPTIONS’` vào `ConfigService`.
-          - Ex:
+          - Đưa provider `‘CONFIG_OPTIONS’` vào `ConfigService` hoàn tất quá trình.
+          - Ex: Xác định nhà cung cấp bằng cách sử dụng mã thông báo không phải lớp
 
             ```js
               import * as dotenv from 'dotenv';
@@ -1186,7 +1186,7 @@
               export class ConfigService {
                 private readonly envConfig: EnvConfig;
 
-                constructor(@Inject('CONFIG_OPTIONS') private options) {
+                constructor(@Inject('CONFIG_OPTIONS') private options) { // Sử dụng @Inject() trang trí
                   const filePath = `${process.env.NODE_ENV || 'development'}.env`;
                   const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
                   this.envConfig = dotenv.parse(fs.readFileSync(envFile));
@@ -1206,7 +1206,7 @@
 
   - `Asynchronous providers`
 
-    - Asynchronous providers
+    - `Asynchronous providers` (Nhà cung cấp không đồng bộ)
       - Đôi khi, việc khởi động ứng dụng sẽ bị trì hoãn cho đến khi hoàn thành một hoặc nhiều tác vụ không đồng bộ .
       - Sử dụng `async/await` .
       - Ex:
@@ -1214,16 +1214,16 @@
           {
           provide: 'ASYNC_CONNECTION',
           useFactory: async () => {
-              const connection = await createConnection(options);
+              const connection = await createConnection(options); //Chờ giải quyết lời hứa trước khi khởi tạo bất kỳ lớp nào
               return connection;
             },
           }
         ```
-    - Injection
-      - Các nhà cung cấp không đồng bộ được mã thông báo của họ tiêm vào các thành phần khác, giống như bất kỳ nhà cung cấp nào khác. Sử dụng cấu trúc `@Inject('ASYNC_CONNECTION')`.
-    - Example
+    - `Injection` (Tiêm)
+      - Các nhà cung cấp không đồng bộ được mã thông báo của họ tiêm vào các thành phần khác, giống như bất kỳ nhà cung cấp nào khác. Sử dụng cấu trúc `@Inject('ASYNC_CONNECTION')` ở ví dụ trên.
+    - Ex:
 
-      - Công thức `TypeORM` có một ví dụ quan trọng hơn về trình cung cấp không đồng bộ.
+      - Công thức `TypeORM` ( cho trình cung cấp không đồng bộ).
       - SQL (TypeORM)
 
         - Chương này chỉ áp dụng cho TypeScript
@@ -1271,10 +1271,10 @@
               export class DatabaseModule {}
               ```
 
-        - Bây giờ chúng ta có thể chèn `Connection` đối tượng bằng cách sử dụng `@Inject()decorator`.
+        - Bây giờ chúng ta có thể chèn `Connection` đối tượng bằng cách sử dụng `@Inject()` decorator.
         - Mỗi lớp phụ thuộc vào `Connection` nhà cung cấp không đồng bộ sẽ đợi cho đến khi `Promise` giải quyết xong.
 
-      - `Repository pattern`
+      - `Repository pattern` (Mẫu kho lưu trữ)
 
         - Các `TypeORM` hỗ trợ các mẫu thiết kế kho lưu trữ, do đó mỗi thực thể có Repository riêng của mình. Các kho này có thể được lấy từ kết nối cơ sở dữ liệu.
         - Khởi tạo
@@ -1325,7 +1325,7 @@
             ];
             ```
 
-        - Bây giờ có thể đưa nó `Repository<Photo>` vào `PhotoService` bằng cách sử dụng `@Inject()decorator`:
+        - Bây giờ có thể đưa nó `Repository<Photo>` vào `PhotoService` bằng cách sử dụng `@Inject()`decorator:
 
           - > photo.service.ts
 
@@ -1347,7 +1347,10 @@
               }
             ```
 
-        - Kết nối cơ sở dữ liệu không đồng bộ, nhưng Nest làm cho quá trình này hoàn toàn ẩn đối với người dùng cuối. Các `PhotoRepository` đang chờ kết nối `db`, và `PhotoService` bị trì hoãn cho đến khi kho đã sẵn sàng để sử dụng. Toàn bộ ứng dụng có thể bắt đầu khi mỗi lớp được khởi tạo.
+        - Kết nối cơ sở dữ liệu không đồng bộ, nhưng Nest làm cho quá trình này hoàn toàn ẩn đối với người dùng cuối.
+        - Các `PhotoRepository` đang chờ kết nối `db`, và `PhotoService` bị trì hoãn cho đến khi kho đã sẵn sàng để sử dụng.
+        - Toàn bộ ứng dụng có thể bắt đầu khi mỗi lớp được khởi tạo.
+          Ex: PhotoModule
 
           - > photo.module.ts
 
