@@ -25,7 +25,7 @@ export class AppController {
 
   @Get()
   getHello(@Param(new ValidationPipe()) params): string {
-    console.log(params);
+    console.log('params', params);
     return 'a';
     // throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
