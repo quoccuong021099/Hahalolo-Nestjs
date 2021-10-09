@@ -557,8 +557,9 @@
     - `Scopes`:
       - Các nhà cung cấp thường có vòng đời (`"scope"`) được đồng bộ hóa với vòng đời ứng dụng.
       - Khi ứng dụng được khởi động, mọi phụ thuộc phải được giải quyết và do đó mọi trình cung cấp phải được khởi tạo.
-    - `Custom providers`
+    - **Custom providers**
 
+      - Ex: Tiêm phụ thuộc dựa trên `phương thức khởi tạo` (DI) được sử dụng để đưa các cá thể (nhà cung cấp) vào các lớp.
       - B1: Xác định một nhà cung cấp.
 
         - Sử dụng `@Injectable()` đánh dấu `CatsService` lớp là một trình cung cấp.
@@ -614,7 +615,7 @@
           export class AppModule {}
           ```
 
-      - Chính xác thì điều gì đang xảy ra dưới vỏ bọc để làm cho điều này thành công? Có ba bước chính trong quy trình:
+      - Ba bước chính trong quy trình:
 
         - 1. Trong cats.service.ts, trình `@Injectable()` trang trí khai báo `CatsServicelớp` là một lớp có thể được quản lý bởi vùng chứa Nest IoC.
         - 2. Trong `cats.controller.ts`, `CatsController` khai báo một sự phụ thuộc vào `CatsService` mã thông báo với chèn hàm tạo:
@@ -670,7 +671,7 @@
           providers: [
             {
               provide: CatsService,
-              useValue: mockCatsService, // yêu cầu một giá trị - trong trường hợp này là một đối tượng theo nghĩa đen có cùng giao diện với CatsServicelớp mà nó đang thay thế
+              useValue: mockCatsService, // yêu cầu một giá trị - trong trường hợp này là một đối tượng theo nghĩa đen có cùng giao diện với CatsService lớp mà nó đang thay thế
             },
           ],
         })
@@ -709,7 +710,7 @@
                 DONE        //2
               }
             ```
-        - Sử dụng trình `@Inject()` để tiêm một nhà 'CONNECTION'cung cấp tùy chỉnh sử dụng mã thông báo có giá trị chuỗi,
+        - Sử dụng trình `@Inject()` để tiêm một nhà `'CONNECTION'` cung cấp tùy chỉnh sử dụng mã thông báo có giá trị chuỗi,
           ```js
           @Injectable()
           export class CatsRepository {
@@ -720,7 +721,7 @@
 
       - `Class providers: useClass`
 
-        - `useClass`: cho phép tự động xác định một lớp học mà một mã thông báo sẽ giải quyết cho.
+        - `useClass`: cho phép tự động xác định một lớp mà một mã thông báo sẽ giải quyết cho.
         - Ex: Giả sử có một lớp trừu tượng `ConfigService`. Tùy thuộc vào môi trường hiện tại muốn Nest cung cấp cách triển khai dịch vụ cấu hình khác nhau.
 
           ```js
@@ -742,10 +743,10 @@
 
         - Nhà cung cấp thực tế sẽ được cung cấp bởi giá trị trả về từ một chức năng của nhà máy.
         - Chức năng của nhà máy có thể đơn giản hoặc phức tạp nếu cần.
-        - Đối với trường hợp thứ hai, cú pháp của nhà cung cấp gốc có một cặp cơ chế liên quan:
+        - Cú pháp của nhà cung cấp gốc có một cặp cơ chế liên quan:
 
-          - 1. Hàm nhà máy có thể chấp nhận các đối số (tùy chọn).
-          - 2. Thuộc tính (tùy chọn) `inject` chấp nhận một mảng các trình cung cấp mà Nest sẽ phân giải và chuyển làm đối số cho hàm gốc trong quá trình khởi tạo.
+          - 1. Hàm nhà máy có thể chấp nhận các đối số (options).
+          - 2. Thuộc tính (options) `inject` chấp nhận một mảng các trình cung cấp mà Nest sẽ phân giải và chuyển làm đối số cho hàm gốc trong quá trình khởi tạo.
           - Ex:
 
             ```js
@@ -993,6 +994,169 @@
 
       - `Global module` chỉ nên được đăng ký một lần , thường là `root` hoặc `core modules`
 
+    - **Asynchronous providers**
+
+      - `Asynchronous providers` (Nhà cung cấp không đồng bộ)
+        - Đôi khi, việc khởi động ứng dụng sẽ bị trì hoãn cho đến khi hoàn thành một hoặc nhiều tác vụ không đồng bộ .
+        - Sử dụng `async/await` .
+        - Ex:
+          ```js
+            {
+            provide: 'ASYNC_CONNECTION',
+            useFactory: async () => {
+                const connection = await createConnection(options); //Chờ giải quyết lời hứa trước khi khởi tạo bất kỳ lớp nào
+                return connection;
+              },
+            }
+          ```
+      - `Injection` (Tiêm)
+        - Các nhà cung cấp không đồng bộ được mã thông báo của họ tiêm vào các thành phần khác, giống như bất kỳ nhà cung cấp nào khác. Sử dụng cấu trúc `@Inject('ASYNC_CONNECTION')` ở ví dụ trên.
+      - Ex:
+
+        - Công thức `TypeORM` ( cho trình cung cấp không đồng bộ).
+        - SQL (TypeORM)
+
+          - Chương này chỉ áp dụng cho TypeScript
+          - B1: Cài đặt thư viện
+            > $ npm install --save typeorm mysql
+          - B2:
+
+            - Thiết lập kết nối với cơ sở dữ liệu bằng `createConnection()` hàm được nhập từ `typeorm` gói. - Các `createConnection()` chức năng trả về một `Promise`, và do đó chúng ta phải tạo ra một nhà cung cấp `async`.
+
+              > database.providers.ts
+
+              ```js
+              import { createConnection } from 'typeorm';
+
+              export const databaseProviders = [
+                {
+                  provide: 'DATABASE_CONNECTION',
+                  useFactory: async () =>
+                    await createConnection({
+                      type: 'mysql',
+                      host: 'localhost',
+                      port: 3306,
+                      username: 'root',
+                      password: 'root',
+                      database: 'test',
+                      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+                      synchronize: true, // Không nên được sử dụng trong sản xuất - nếu không có thể bị mất dữ liệu sản xuất.
+                    }),
+                },
+              ];
+              ```
+
+          - B3: Xuất các nhà cung cấp này để làm cho chúng có thể truy cập được cho phần còn lại của ứng dụng.
+
+            > database.module.ts
+
+                ```js
+                import { Module } from '@nestjs/common';
+                import { databaseProviders } from './database.providers';
+
+                @Module({
+                  providers: [...databaseProviders],
+                  exports: [...databaseProviders],
+                })
+                export class DatabaseModule {}
+                ```
+
+          - Bây giờ chúng ta có thể chèn `Connection` đối tượng bằng cách sử dụng `@Inject()` decorator.
+          - Mỗi lớp phụ thuộc vào `Connection` nhà cung cấp không đồng bộ sẽ đợi cho đến khi `Promise` giải quyết xong.
+
+        - `Repository pattern` (Mẫu kho lưu trữ)
+
+          - Các `TypeORM` hỗ trợ các mẫu thiết kế kho lưu trữ, do đó mỗi thực thể có Repository riêng của mình. Các kho này có thể được lấy từ kết nối cơ sở dữ liệu.
+          - Khởi tạo
+
+            - > photo.entity.ts
+
+              ```js
+              import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+              @Entity()
+              export class Photo {
+                @PrimaryGeneratedColumn()
+                id: number;
+
+                @Column({ length: 500 })
+                name: string;
+
+                @Column('text')
+                description: string;
+
+                @Column()
+                filename: string;
+
+                @Column('int')
+                views: number;
+
+                @Column()
+                isPublished: boolean;
+              }
+              ```
+
+          - Thực `Photo` thể thuộc về `photo` thư mục. Thư mục này đại diện cho `PhotoModule`.
+          - Tạo một nhà cung cấp Kho lưu trữ :
+
+            - > photo.providers.ts
+
+              ```js
+              import { Connection } from 'typeorm';
+              import { Photo } from './photo.entity';
+
+              export const photoProviders = [
+                {
+                  provide: 'PHOTO_REPOSITORY',
+                  useFactory: (connection: Connection) =>
+                    connection.getRepository(Photo),
+                  inject: ['DATABASE_CONNECTION'],
+                },
+              ];
+              ```
+
+          - Bây giờ có thể đưa nó `Repository<Photo>` vào `PhotoService` bằng cách sử dụng `@Inject()`decorator:
+
+            - > photo.service.ts
+
+              ```js
+                import { Injectable, Inject } from '@nestjs/common';
+                import { Repository } from 'typeorm';
+                import { Photo } from './photo.entity';
+
+                @Injectable()
+                export class PhotoService {
+                  constructor(
+                    @Inject('PHOTO_REPOSITORY')
+                    private photoRepository: Repository<Photo>,
+                  ) {}
+
+                  async findAll(): Promise<Photo[]> {
+                    return this.photoRepository.find();
+                  }
+                }
+              ```
+
+          - Kết nối cơ sở dữ liệu không đồng bộ, nhưng Nest làm cho quá trình này hoàn toàn ẩn đối với người dùng cuối.
+          - Các `PhotoRepository` đang chờ kết nối `db`, và `PhotoService` bị trì hoãn cho đến khi kho đã sẵn sàng để sử dụng.
+          - Toàn bộ ứng dụng có thể bắt đầu khi mỗi lớp được khởi tạo.
+            Ex: PhotoModule
+
+            - > photo.module.ts
+
+              ```js
+              import { Module } from '@nestjs/common';
+              import { DatabaseModule } from '../database/database.module';
+              import { photoProviders } from './photo.providers';
+              import { PhotoService } from './photo.service';
+
+              @Module({
+                imports: [DatabaseModule],
+                providers: [...photoProviders, PhotoService],
+              })
+              export class PhotoModule {}
+              ```
+
     - **Dynamic modules** (Mô-đun động)
 
       - Hệ thống module Nest bao gồm một tính năng mạnh mẽ được gọi là `dynamic modules` (module động) .
@@ -1202,167 +1366,3 @@
               ```js
               export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
               ```
-            -
-
-  - `Asynchronous providers`
-
-    - `Asynchronous providers` (Nhà cung cấp không đồng bộ)
-      - Đôi khi, việc khởi động ứng dụng sẽ bị trì hoãn cho đến khi hoàn thành một hoặc nhiều tác vụ không đồng bộ .
-      - Sử dụng `async/await` .
-      - Ex:
-        ```js
-          {
-          provide: 'ASYNC_CONNECTION',
-          useFactory: async () => {
-              const connection = await createConnection(options); //Chờ giải quyết lời hứa trước khi khởi tạo bất kỳ lớp nào
-              return connection;
-            },
-          }
-        ```
-    - `Injection` (Tiêm)
-      - Các nhà cung cấp không đồng bộ được mã thông báo của họ tiêm vào các thành phần khác, giống như bất kỳ nhà cung cấp nào khác. Sử dụng cấu trúc `@Inject('ASYNC_CONNECTION')` ở ví dụ trên.
-    - Ex:
-
-      - Công thức `TypeORM` ( cho trình cung cấp không đồng bộ).
-      - SQL (TypeORM)
-
-        - Chương này chỉ áp dụng cho TypeScript
-        - B1: Cài đặt thư viện
-          > $ npm install --save typeorm mysql
-        - B2:
-
-          - Thiết lập kết nối với cơ sở dữ liệu bằng `createConnection()` hàm được nhập từ `typeorm` gói. - Các `createConnection()` chức năng trả về một `Promise`, và do đó chúng ta phải tạo ra một nhà cung cấp `async`.
-
-            > database.providers.ts
-
-            ```js
-            import { createConnection } from 'typeorm';
-
-            export const databaseProviders = [
-              {
-                provide: 'DATABASE_CONNECTION',
-                useFactory: async () =>
-                  await createConnection({
-                    type: 'mysql',
-                    host: 'localhost',
-                    port: 3306,
-                    username: 'root',
-                    password: 'root',
-                    database: 'test',
-                    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-                    synchronize: true, // Không nên được sử dụng trong sản xuất - nếu không có thể bị mất dữ liệu sản xuất.
-                  }),
-              },
-            ];
-            ```
-
-        - B3: Xuất các nhà cung cấp này để làm cho chúng có thể truy cập được cho phần còn lại của ứng dụng.
-
-          > database.module.ts
-
-              ```js
-              import { Module } from '@nestjs/common';
-              import { databaseProviders } from './database.providers';
-
-              @Module({
-                providers: [...databaseProviders],
-                exports: [...databaseProviders],
-              })
-              export class DatabaseModule {}
-              ```
-
-        - Bây giờ chúng ta có thể chèn `Connection` đối tượng bằng cách sử dụng `@Inject()` decorator.
-        - Mỗi lớp phụ thuộc vào `Connection` nhà cung cấp không đồng bộ sẽ đợi cho đến khi `Promise` giải quyết xong.
-
-      - `Repository pattern` (Mẫu kho lưu trữ)
-
-        - Các `TypeORM` hỗ trợ các mẫu thiết kế kho lưu trữ, do đó mỗi thực thể có Repository riêng của mình. Các kho này có thể được lấy từ kết nối cơ sở dữ liệu.
-        - Khởi tạo
-
-          - > photo.entity.ts
-
-            ```js
-            import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
-            @Entity()
-            export class Photo {
-              @PrimaryGeneratedColumn()
-              id: number;
-
-              @Column({ length: 500 })
-              name: string;
-
-              @Column('text')
-              description: string;
-
-              @Column()
-              filename: string;
-
-              @Column('int')
-              views: number;
-
-              @Column()
-              isPublished: boolean;
-            }
-            ```
-
-        - Thực `Photo` thể thuộc về `photo` thư mục. Thư mục này đại diện cho `PhotoModule`.
-        - Tạo một nhà cung cấp Kho lưu trữ :
-
-          - > photo.providers.ts
-
-            ```js
-            import { Connection } from 'typeorm';
-            import { Photo } from './photo.entity';
-
-            export const photoProviders = [
-              {
-                provide: 'PHOTO_REPOSITORY',
-                useFactory: (connection: Connection) =>
-                  connection.getRepository(Photo),
-                inject: ['DATABASE_CONNECTION'],
-              },
-            ];
-            ```
-
-        - Bây giờ có thể đưa nó `Repository<Photo>` vào `PhotoService` bằng cách sử dụng `@Inject()`decorator:
-
-          - > photo.service.ts
-
-            ```js
-              import { Injectable, Inject } from '@nestjs/common';
-              import { Repository } from 'typeorm';
-              import { Photo } from './photo.entity';
-
-              @Injectable()
-              export class PhotoService {
-                constructor(
-                  @Inject('PHOTO_REPOSITORY')
-                  private photoRepository: Repository<Photo>,
-                ) {}
-
-                async findAll(): Promise<Photo[]> {
-                  return this.photoRepository.find();
-                }
-              }
-            ```
-
-        - Kết nối cơ sở dữ liệu không đồng bộ, nhưng Nest làm cho quá trình này hoàn toàn ẩn đối với người dùng cuối.
-        - Các `PhotoRepository` đang chờ kết nối `db`, và `PhotoService` bị trì hoãn cho đến khi kho đã sẵn sàng để sử dụng.
-        - Toàn bộ ứng dụng có thể bắt đầu khi mỗi lớp được khởi tạo.
-          Ex: PhotoModule
-
-          - > photo.module.ts
-
-            ```js
-            import { Module } from '@nestjs/common';
-            import { DatabaseModule } from '../database/database.module';
-            import { photoProviders } from './photo.providers';
-            import { PhotoService } from './photo.service';
-
-            @Module({
-              imports: [DatabaseModule],
-              providers: [...photoProviders, PhotoService],
-            })
-            export class PhotoModule {}
-            ```
