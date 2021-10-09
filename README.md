@@ -25,7 +25,21 @@
 ## **Dependency Injection là gì?**
 
 - Dependency Injection là kỹ thuật tách một class độc lập với các biến phụ thuộc. Trong lập trình hướng đối tượng, chúng ta luôn phải làm việc với nhiều class. Dependency là một loại quan hệ giữa hai class mà trong đó một class hoạt động độc lập và class còn lại phụ thuộc vào class kia.
-
+- Dependency injection được định nghĩa là kỹ thuật lập trình có khả năng hỗ trợ tách một class độc lập với những biến phụ thuộc khác.
+- Ví dụ: 
+  - Khi một lớp A sử dụng các chức năng của lớp B thì có nghĩa là lớp A có một phụ thuộc với lớp B
+- Có 3 loại Dependency Injection khá phổ biến:
+  - Constructor Injection: Những biến phụ thuộc này sẽ được cung cấp dựa vào một hàm tạo lớp mới
+  - Setter Injection : Client sẽ đưa ra một phương thức dạng setter mà khi đó Injector sẽ được sử dụng nhằm Dependency injection 
+  - Interface Injection: Các biến phụ thuộc sẽ đưa một method để có thể đưa được biên dịch này vào bất kỳ loại máy khách chạy ngang qua nào. Khi đó, máy khách cần phải triển khai một giao diện có chứa setter method để có thể chấp nhận cho các biến phụ thuộc. 
+- Nhiệm vụ của Dependency Injection 
+    - Dependency Injection được tạo ra và sử dụng để giải quyết các nhiệm vụ như sau
+      - Tạo các đối tượng
+      - Nắm bắt các đối tượng nào sẽ phù hợp với lớp nào. 
+      - Thực hiện cung cấp cho những lớp đó toàn bộ mọi đối tượng. 
+- Dependency Injection còn có nhiệm vụ thực hiện đảo ngược kiểm soát — khái niệm đằng sau DI
+  - Một số lớp không nên được cấu hình tương tự với các biến phụ tĩnh mà cần cấu hình bởi 1 số lớp khác từ bên ngoài. Đây chính là nguyên tắc trong S.O.L.I.D, cũng là 5 nguyên tắc cơ bản liên quan đến lập trình hướng đối tượng cần nắm rõ. Dựa theo nguyên tắc này thì một lớp cần nên dựa vào abstraction chứ không phải concretions (dựa theo thuật ngữ đơn giản, mã hóa cứng – hard-coded).
+  - Theo đó, thì một lớp nên tập trung vào hoàn thành những nhiệm vụ của mình chứ không cần tạo ra các đối tượng cần thiết dành cho việc thực hiện nhiệm vụ đó. 
 ## **Controller**
 
 ![controller](https://docs.nestjs.com/assets/Controllers_1.png)
@@ -157,9 +171,6 @@ create() {
   }
 ```
 
-### **Request payloads**
-- DTO là một đối tượng xác định cách dữ liệu sẽ được gửi qua mạng
-
 ## **Module**
 
 ![controller](https://images.viblo.asia/13526c5b-6edc-481e-a040-3e9a0639d178.png)
@@ -233,8 +244,7 @@ export class CatsModule {}
 
 ![Providers](https://images.viblo.asia/51c7a63b-07cc-4585-b610-3aa8386c0bd1.png)
 
-- **Provider** là nơi cung cấp các serivce, repositories, factories, helpers,... cho controller trong một module sử dụng. Đây cũng là nơi sẽ chứa những logic xử lý đã được tách biệt với controller. Để tạo ra một provider chúng ta chỉ cần khai báo @Injectable () trước một class đã định nghĩa. Việc sử dụng @Injectable() sẽ cho Nest biết đây là một class thuộc provider. Để tạo ra một service nơi mà chứa các logic xử lý của UserController, chúng ta hãy tạo ra một UserService trong file user.service.ts dưới đây hoặc sử dụng
-
+- **Provider** là nơi cung cấp các serivce, repositories, factories, helpers,... cho controller trong một module sử dụng. Đây cũng là nơi sẽ chứa những logic xử lý đã được tách biệt với controller. Để tạo ra một provider chúng ta chỉ cần khai báo @Injectable () trước một class đã định nghĩa. Việc sử dụng @Injectable() sẽ cho Nest biết đây là một class thuộc provider. Để tạo ra một service nơi mà chứa các logic xử lý của UserController
 ```
 nest g service users
 ```
@@ -503,16 +513,69 @@ throw new ForbiddenExceptionC();
 
 ## Custom providers
 
+### DI fundamentals
+- Dependency injection là một kỹ thuật inversion of control (IoC), trong đó bạn ủy quyền việc khởi tạo các phần phụ thuộc vào vùng chứa IoC (trong trường hợp của chúng tôi là hệ thống thời gian chạy NestJS), thay vì thực hiện nó trong mã của riêng bạn một cách cấp bậc.
+### Standard providers
+
+### Custom providers
+- Điều gì xảy ra khi các yêu cầu của bạn vượt quá những yêu cầu do các Standard providers đưa ra?
+- Bạn muốn tạo instance tùy chỉnh của nội dung thay vì có Nest tức thời (hoặc trả về instance được lưu trong bộ nhớ cache của) một lớp
+- Bạn muốn sử dụng lại một lớp hiện có trong dependency thứ hai
+- Bạn muốn ghi đè một lớp bằng phiên bản giả để testing
+
+### useValue
+- Cú pháp useValue hữu ích để inject vào một giá trị không đổi, đưa một thư viện bên ngoài vào vùng chứa Nest hoặc thay thế một triển khai thực bằng một đối tượng giả. 
+
+### Non-class-based provider tokens
+- Trước đây chúng ta đã biết cách inject a provider bằng cách sử dụng mẫu constructor based injection. Mẫu này yêu cầu phần dependency phải được khai báo với một tên lớp. Provider tùy chỉnh ‘CONNECTION’ sử dụng token có giá trị chuỗi. Hãy xem làm thế nào để inject một provider như vậy. Để làm như vậy, chúng tôi sử dụng @Inject() decorator. Decorator này nhận một đối số duy nhất – token.
+- HINT @Inject() decorator được dùng từ gói @nestjs/common
+
+### useClass
+
+- Cú pháp useClass cho phép bạn xác định động một lớp mà token sẽ phân giải. Ví dụ, giả sử chúng ta có một lớp ConfigService trừu tượng (hoặc mặc định). Tùy thuộc vào môi trường hiện tại, chúng tôi muốn Nest cung cấp cách triển khai dịch vụ cấu hình khác nhau. 
+
+
+### useFactory
+
+- Cú pháp useFactory cho phép tạo động các providers. Provider thực tế sẽ được cung cấp bởi giá trị trả về từ một function của factory. Factory function có thể đơn giản hoặc phức tạp nếu cần. Một factory đơn giản có thể không phụ thuộc vào bất kỳ provider nào khác. Một factory phức tạp hơn có thể tự inject các provider khác mà nó cần để tính toán kết quả của nó. Đối với trường hợp thứ hai, cú pháp của provider gốc có một cặp cơ chế liên quan:
+  + Factory function có thể chấp nhận các đối số (tùy chọn).
+  + Thuộc tính inject (tùy chọn) chấp nhận một mảng các providers mà Nest sẽ phân giải và truyền làm đối số cho factory function trong quá trình khởi tạo. Hai danh sách phải tương quan với nhau: Nest sẽ chuyển các instances từ danh sách inject làm đối số cho factory function theo cùng một thứ tự.
+
+### useExisting
+- Cú pháp useExisting cho phép bạn tạo aliases cho các providers hiện có. Điều này tạo ra hai cách để truy cập cùng một provider. Trong ví dụ bên dưới, token (dựa trên chuỗi) ‘AliasedLoggerService‘ là bí danh cho token (dựa trên lớp) LoggerService. Giả sử chúng ta có hai dependencies khác nhau, một cho ‘AliasedLoggerService‘ và một cho LoggerService. Nếu cả hai phần dependencies đều được chỉ định với phạm vi SINGLETON, cả hai đều sẽ giải quyết cho cùng một instance.
 
 
 
+## Asynchronous providers
 
+- Đôi khi, việc khởi động ứng dụng sẽ bị trì hoãn cho đến khi hoàn thành một hoặc nhiều tác vụ không đồng bộ. Ví dụ, bạn có thể không muốn bắt đầu chấp nhận các requests cho đến khi kết nối với cơ sở dữ liệu đã được thiết lập. Bạn có thể đạt được điều này bằng cách sử dụng các providers không đồng bộ.
 
+- Cú pháp cho điều này là sử dụng async / await với cú pháp useFactory. Factory trả về một Promise và factory function có thể await các tác vụ không đồng bộ. Nest sẽ chờ giải quyết lời hứa trước khi khởi tạo bất kỳ lớp nào phụ thuộc vào (injects) một provider như vậy.
+```ts
+{
+  provide: 'ASYNC_CONNECTION',
+  useFactory: async () => {
+    const connection = await createConnection(options);
+    return connection;
+  },
+}
+```
 
+Các providers không đồng bộ được token của họ inject vào các thành phần khác, giống như bất kỳ provider nào khác. Trong ví dụ trên, bạn sẽ sử dụng cấu trúc @Inject(‘ASYNC_CONNECTION’).
 
+## Dynamic modules
 
+- Hầu hết các ví dụ về mã ứng dụng trong phần Overview của tài liệu đều sử dụng các mô-đun thông thường hoặc tĩnh. Mô-đun xác định các nhóm thành phần như providers and controllers phù hợp với nhau như một phần mô-đun của một ứng dụng tổng thể. Chúng cung cấp bối cảnh thực thi hoặc phạm vi cho các thành phần này. Ví dụ: các providers được xác định trong một mô-đun sẽ hiển thị với các thành viên khác của mô-đun mà không cần xuất chúng. Khi một provider cần hiển thị bên ngoài một mô-đun, trước tiên nó sẽ được xuất từ mô-đun chủ của nó, sau đó được nhập vào mô-đun tiêu thụ của nó.
 
+### Dynamic module use case
 
+- Với ràng buộc mô-đun tĩnh, không có cơ hội để mô-đun sử dụng ảnh hưởng đến cách các providers từ mô-đun chủ được định cấu hình. Vì sao vấn đề này? Hãy xem xét trường hợp chúng ta có một mô-đun mục đích chung cần hoạt động khác nhau trong các trường hợp sử dụng khác nhau. Điều này tương tự với khái niệm “plugin” trong nhiều hệ thống, trong đó một cơ sở chung yêu cầu một số cấu hình trước khi nó có thể được người tiêu dùng sử dụng.
+
+- Một ví dụ điển hình với Nest là mô-đun cấu hình. Nhiều ứng dụng thấy hữu ích khi ngoại hóa chi tiết cấu hình bằng cách sử dụng mô-đun cấu hình. Điều này giúp bạn dễ dàng thay đổi động cài đặt ứng dụng trong các lần triển khai khác nhau: ví dụ: cơ sở dữ liệu phát triển cho nhà phát triển, cơ sở dữ liệu dàn cho môi trường dàn / thử nghiệm, v.v. Bằng cách ủy quyền quản lý các tham số cấu hình cho mô-đun cấu hình, mã nguồn ứng dụng vẫn độc lập với các thông số cấu hình.
+
+- Thách thức là bản thân mô-đun cấu hình, vì nó chung chung (tương tự như “plugin”), cần được tùy chỉnh bởi mô-đun tiêu thụ của nó. Đây là lúc các mô-đun động phát huy tác dụng. Bằng cách sử dụng các tính năng của mô-đun động, chúng tôi có thể làm cho mô-đun cấu hình động để mô-đun tiêu thụ có thể sử dụng API để kiểm soát cách mô-đun cấu hình được tùy chỉnh tại thời điểm nó được nhập.
+
+- Nói cách khác, các mô-đun động cung cấp một API để nhập một mô-đun này vào một mô-đun khác và tùy chỉnh các thuộc tính và hành vi của mô-đun đó khi nó được nhập, trái ngược với việc sử dụng các ràng buộc tĩnh mà chúng ta đã thấy cho đến nay.
 
 
 

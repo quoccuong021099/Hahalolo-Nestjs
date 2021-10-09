@@ -133,7 +133,7 @@ export class UsersController {
     return user;
   }
 
-  @Put('/put/:id')
+  @Put('/update/:id')
   demoPut(
     @Param('id') id: number,
     @Body() @Body() updateUser: UpdateUser,
@@ -141,5 +141,5 @@ export class UsersController {
     return this.usersService.updateUser(updateUser.name, updateUser.age, id);
   }
 
-
+ 
 }
