@@ -847,7 +847,7 @@ Hãy sử dụng phương thức getByRequest()của lớp ContextIdFactory đ�
 
 ### 3.5. Instantiating custom classes dynamically
 
-Để khởi tạo động một lớp chưa được đăng ký trước đó làm nhà cung cấp, hãy sử dụng phương thức create() của tham chiếu mô-đun.
+Để khởi tạo động một lớp chưa được đăng ký trước đó làm nhà cung cấp, hãy sử dụng phương thức create() của tham chiếu module.
 
 ```ts
 @Injectable()
@@ -865,13 +865,13 @@ Kỹ thuật này cho phép khởi tạo có điều kiện các lớp khác nha
 
 ## 4. Lazy-loading modules
 
-Theo mặc định, các mô-đun được tải nhanh, có nghĩa là ngay sau khi ứng dụng tải, tất cả các mô-đun cũng vậy, cho dù chúng có cần thiết ngay lập tức hay không. Mặc dù điều này là tốt cho hầu hết các ứng dụng, nhưng nó có thể trở thành một nút cổ chai cho các ứng dụng, nơi mà độ trễ khởi động là rất quan trọng.
+Theo mặc định, các module được tải nhanh, có nghĩa là ngay sau khi ứng dụng tải, tất cả các module cũng vậy, cho dù chúng có cần thiết ngay lập tức hay không. Mặc dù điều này là tốt cho hầu hết các ứng dụng, nhưng nó có thể trở thành một nút cổ chai cho các ứng dụng, nơi mà độ trễ khởi động là rất quan trọng.
 
-Tải chậm có thể giúp giảm thời gian khởi động bằng cách chỉ tải các mô-đun được yêu cầu bởi lệnh gọi chức năng không máy chủ cụ thể. Ngoài ra, bạn cũng có thể tải các mô-đun khác một cách không đồng bộ sau khi chức năng serverless "ấm" để tăng tốc thời gian khởi động cho các cuộc gọi tiếp theo hơn nữa.
+Tải chậm có thể giúp giảm thời gian khởi động bằng cách chỉ tải các module được yêu cầu bởi lệnh gọi chức năng không máy chủ cụ thể. Ngoài ra, cũng có thể tải các module khác một cách không đồng bộ sau khi chức năng serverless "ấm" để tăng tốc thời gian khởi động cho các cuộc gọi tiếp theo hơn nữa.
 
 ### 4.1. Getting started
 
-Để tải các mô-đun theo yêu cầu, Nest cung cấp lớp LazyModuleLoader có thể được đưa vào một lớp:
+Để tải các module theo yêu cầu, Nest cung cấp lớp LazyModuleLoader có thể được đưa vào một lớp:
 
 ```ts
 @Injectable()
@@ -880,21 +880,23 @@ export class CatsService {
 }
 ```
 
-Ngoài ra, bạn có thể lấy tham chiếu đến LazyModuleLoadernhà cung cấp từ bên trong tệp bootstrap ứng dụng của mình ( main.ts), như sau:
+Ngoài ra, có thể lấy tham chiếu đến LazyModuleLoadernhà cung cấp từ bên trong tệp bootstrap ứng dụng( main.ts), như sau:
 
 ```ts
 // "app" represents a Nest application instance
 const lazyModuleLoader = app.get(LazyModuleLoader);
 ```
 
-Với điều này tại chỗ, bây giờ bạn có thể tải bất kỳ mô-đun nào bằng cách sử dụng cấu trúc sau:
+Với điều này tại chỗ, bây giờ có thể tải bất kỳ module nào bằng cách sử dụng cấu trúc sau:
 
 ```ts
 const { LazyModule } = await import("./lazy.module");
 const moduleRef = await this.lazyModuleLoader.load(() => LazyModule);
 ```
 
-Trong đó lazy.module.ts là tệp TypeScript xuất mô-đun Nest thông thường (không cần thay đổi thêm). Phương thức tải LazyModuleLoader # trả về tham chiếu mô-đun (của LazyModule) cho phép bạn điều hướng danh sách nội bộ của các nhà cung cấp và lấy tham chiếu đến bất kỳ nhà cung cấp nào bằng cách sử dụng mã thông báo tiêm của nó làm khóa tra cứu. Ví dụ: giả sử chúng ta có một LazyModule với định nghĩa sau:
+Trong đó lazy.module.ts là tệp TypeScript xuất module Nest thông thường. Phương thức tải LazyModuleLoader trả về tham chiếu module (của LazyModule) cho phép bạn điều hướng danh sách nội bộ của các nhà cung cấp và lấy tham chiếu đến bất kỳ nhà cung cấp nào bằng cách sử dụng mã thông báo tiêm của nó làm khóa tra cứu.
+
+Ví dụ: giả sử chúng ta có một LazyModule với định nghĩa sau:
 
 ```ts
 @Module({
@@ -904,7 +906,7 @@ Trong đó lazy.module.ts là tệp TypeScript xuất mô-đun Nest thông thư�
 export class LazyModule {}
 ```
 
-Với điều này, chúng tôi có thể nhận được một tham chiếu đến nhà cung cấp LazyService, như sau:
+Với điều này, có thể nhận được một tham chiếu đến LazyService, như sau:
 
 ```ts
 const { LazyModule } = await import("./lazy.module");
@@ -916,12 +918,12 @@ const lazyService = moduleRef.get(LazyService);
 
 ### 4.2 Lazy-loading controllers, gateways, and resolvers
 
-Giả sử bạn đang xây dựng một REST API với một trình điều khiển Fastify bên dưới (sử dụng @nestjs/platform-fastifygói). Fastify không cho phép bạn đăng ký lộ trình sau khi ứng dụng đã sẵn sàng / nghe tin nhắn thành công. Điều đó có nghĩa là ngay cả khi chúng tôi phân tích ánh xạ tuyến được đăng ký trong bộ điều khiển của mô-đun, tất cả các tuyến được tải chậm sẽ không thể truy cập được vì không có cách nào để đăng ký chúng trong thời gian chạy.
+Giả sử bạn đang xây dựng một REST API với một trình điều khiển Fastify bên dưới. Fastify không cho phép bạn đăng ký lộ trình sau khi ứng dụng đã sẵn sàng / nghe tin nhắn thành công. Điều đó có nghĩa là ngay cả khi chúng tôi phân tích ánh xạ tuyến được đăng ký trong bộ điều khiển của module, tất cả các tuyến được tải chậm sẽ không thể truy cập được vì không có cách nào để đăng ký chúng trong thời gian chạy.
 
-Tương tự như vậy, một số chiến lược truyền tải mà chúng tôi cung cấp như một phần của @nestjs/microservicesgói (bao gồm Kafka, gRPC hoặc RabbitMQ) yêu cầu đăng ký / nghe các chủ đề / kênh cụ thể trước khi kết nối được thiết lập. Khi ứng dụng của bạn bắt đầu nghe tin nhắn, khuôn khổ sẽ không thể đăng ký / nghe các chủ đề mới.
+Tương tự như vậy, một số chiến lược truyền tải mà chúng tôi cung cấp như một phần của @nestjs/microservices (bao gồm Kafka, gRPC hoặc RabbitMQ) yêu cầu đăng ký / nghe các chủ đề / kênh cụ thể trước khi kết nối được thiết lập. Khi ứng dụng của bạn bắt đầu nghe tin nhắn, khuôn khổ sẽ không thể đăng ký / nghe các chủ đề mới.
 
-Cuối cùng, @nestjs/graphqlgói có bật phương pháp tiếp cận mã đầu tiên tự động tạo lược đồ GraphQL một cách nhanh chóng dựa trên siêu dữ liệu. Điều đó có nghĩa là, nó yêu cầu tất cả các lớp phải được tải trước. Nếu không, sẽ không thể tạo lược đồ hợp lệ, thích hợp.
+Cuối cùng, @nestjs/graphql có bật phương pháp tiếp cận mã đầu tiên tự động tạo lược đồ GraphQL một cách nhanh chóng dựa trên siêu dữ liệu. Điều đó có nghĩa là, nó yêu cầu tất cả các lớp phải được tải trước. Nếu không, sẽ không thể tạo lược đồ hợp lệ, thích hợp.
 
 ### 4.3. Common use-cases
 
-Thông thường nhất, sẽ thấy các mô-đun được tải chậm trong các tình huống khi hàm worker / cron job / lambda & serverless / webhook của bạn phải kích hoạt các dịch vụ khác nhau (logic khác nhau) dựa trên các đối số đầu vào (đường dẫn tuyến đường / tham số ngày / truy vấn, v.v.). Mặt khác, các mô-đun lười tải có thể không có quá nhiều ý nghĩa đối với các ứng dụng nguyên khối, nơi mà thời gian khởi động khá không liên quan.
+Thông thường nhất, sẽ thấy các module được tải chậm trong các tình huống khi hàm worker / cron job / lambda & serverless / webhook của bạn phải kích hoạt các dịch vụ khác nhau (logic khác nhau) dựa trên các đối số đầu vào (đường dẫn tuyến đường / tham số ngày / truy vấn, v.v.). Mặt khác, các module lười tải có thể không có quá nhiều ý nghĩa đối với các ứng dụng nguyên khối, nơi mà thời gian khởi động khá không liên quan.
