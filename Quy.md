@@ -1050,16 +1050,16 @@
 
             > database.module.ts
 
-                ```js
-                import { Module } from '@nestjs/common';
-                import { databaseProviders } from './database.providers';
+            ```js
+            import { Module } from '@nestjs/common';
+            import { databaseProviders } from './database.providers';
 
-                @Module({
-                  providers: [...databaseProviders],
-                  exports: [...databaseProviders],
-                })
-                export class DatabaseModule {}
-                ```
+            @Module({
+              providers: [...databaseProviders],
+              exports: [...databaseProviders],
+            })
+            export class DatabaseModule {}
+            ```
 
           - Bây giờ chúng ta có thể chèn `Connection` đối tượng bằng cách sử dụng `@Inject()` decorator.
           - Mỗi lớp phụ thuộc vào `Connection` nhà cung cấp không đồng bộ sẽ đợi cho đến khi `Promise` giải quyết xong.
@@ -1096,7 +1096,7 @@
               }
               ```
 
-          - Thực `Photo` thể thuộc về `photo` thư mục. Thư mục này đại diện cho `PhotoModule`.
+          - Thực thể `Photo` thuộc về `photo` thư mục. Thư mục này đại diện cho `PhotoModule`.
           - Tạo một nhà cung cấp Kho lưu trữ :
 
             - > photo.providers.ts
@@ -1140,7 +1140,7 @@
           - Kết nối cơ sở dữ liệu không đồng bộ, nhưng Nest làm cho quá trình này hoàn toàn ẩn đối với người dùng cuối.
           - Các `PhotoRepository` đang chờ kết nối `db`, và `PhotoService` bị trì hoãn cho đến khi kho đã sẵn sàng để sử dụng.
           - Toàn bộ ứng dụng có thể bắt đầu khi mỗi lớp được khởi tạo.
-            Ex: PhotoModule
+          - Ex:
 
             - > photo.module.ts
 
@@ -1193,7 +1193,7 @@
           export class AuthModule {}
           ```
 
-          - B3: Những cấu trúc này cho phép đưa `UsersService` vào
+        - B3: Những cấu trúc này cho phép đưa `UsersService` vào
 
           ```js
             import { Injectable } from '@nestjs/common';
@@ -1237,22 +1237,22 @@
             export class AppModule {}
             ```
 
-          -Ex: Về xem xét việc import module động (truyền vào một đối tượng cấu hình)
+          - Ex: Về xem xét việc import module động (truyền vào một đối tượng cấu hình)
 
-          ```js
-          import { Module } from '@nestjs/common';
-          import { AppController } from './app.controller';
-          import { AppService } from './app.service';
-          import { ConfigModule } from './config/config.module';
+            ```js
+            import { Module } from '@nestjs/common';
+            import { AppController } from './app.controller';
+            import { AppService } from './app.service';
+            import { ConfigModule } from './config/config.module';
 
-          @Module({
-            // Trả về 1 đối tượng có giao diện DynamicModule
-            imports: [ConfigModule.register({ folder: './config' })],
-            controllers: [AppController],
-            providers: [AppService],
-          })
-          export class AppModule {}
-          ```
+            @Module({
+              // Trả về 1 đối tượng có giao diện DynamicModule
+              imports: [ConfigModule.register({ folder: './config' })],
+              controllers: [AppController],
+              providers: [AppService],
+            })
+            export class AppModule {}
+            ```
 
           - Giải thích: Hãy xem điều gì đang xảy ra trong ví dụ động ở trên. Các bộ phận chuyển động là gì?
 
