@@ -4,6 +4,6 @@ import { InterceptService } from './intercept.service';
 
 @Module({
   controllers: [InterceptController],
-  providers: [InterceptService]
+  providers: [InterceptService],
 })
 export class InterceptModule {}
